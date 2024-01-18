@@ -1,0 +1,160 @@
+/* Acreditions part */
+.collab-main {
+  user-select: none;
+}
+.acredits-marquee-1 {
+    display: block;
+    background-color: white;
+  }
+  
+  .acredits-marquee-2 {
+    display: none;
+  }
+  
+  .collab-main {
+    position: relative;
+    overflow: hidden;
+    padding-top: 60px;
+    background-color:#E4F7FA ;
+  
+  }
+  
+  .collab-main h2 {
+    width: 923px;
+    margin: auto;
+    margin-bottom: 30px;
+  }
+  
+  .collab-cards {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding-top: 23px;
+    padding-bottom: 40px;
+    overflow: hidden;
+  
+  }
+  
+  .collab-card {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 211px;
+    height: 106px;
+    border-radius: 26px;
+    background: #FFF;
+    border: 1px solid rgba(145, 143, 143, 0.249);
+    overflow: hidden;
+    user-select: none;
+    pointer-events: none;
+  
+  }
+  
+  .collab-cards .collab-card:first-child {
+    margin-left: 20px;
+  }
+  
+  @media only screen and (max-width: 1180px) {
+  
+    /* Acreditions part */
+    .acredits-marquee-1 {
+      display: block;
+      padding-top: 20px;
+      padding-bottom: 20px;
+    }
+  
+    .acredits-marquee-2 {
+      display: none;
+    }
+  
+    .collab-main {
+      position: relative;
+      margin-top: 0px;
+      padding-bottom: 0px;
+  
+    }
+  
+    .collab-main h2 {
+        width: 90%;
+        margin-bottom: 40px;
+    }
+  
+    .collab-cards {
+      gap: 4px;
+      padding-top: 0px;
+      padding-bottom: 10px;
+    }
+  
+    .collab-card {
+      width: 185px;
+      height: 90px;
+      margin-left: 3px;
+      margin-right: 3px;
+      border-radius: 14px;
+      box-shadow: none;
+      border: 1px solid rgba(0, 0, 0, 0.12);
+    }
+  
+    .collab-card-img {
+      width: 150px;
+      height: 100px;
+      object-fit: contain;
+    }
+  
+    .collab-cards .collab-card:first-child {
+      margin-left: 8px;
+    }
+  }
+  
+  @media only screen and (max-width: 640px) {
+  
+    /* Acreditions part */
+    .acredits-marquee-1 {
+      display: none;
+    }
+  
+    .acredits-marquee-2 {
+      display: block;
+     
+    }
+  
+    .collab-main {
+      position: relative;
+      margin-top: 10px;
+      padding-top: 40px;
+      background-color: white;
+  
+    }
+    .collab-main h2 {
+      width: 80%;
+      margin-bottom: 10px;
+    }
+  
+    .collab-cards {
+      gap: 2px;
+      padding-top: 0px;
+      padding-bottom: 10px;
+    }
+  
+    .collab-card {
+      width: 114px;
+      height: 57px;
+      margin-left: 3px;
+      margin-right: 3px;
+      border-radius: 14.533px;
+      background: #FFF;
+      box-shadow: none;
+      border: 1px solid rgba(0, 0, 0, 0.12);
+    }
+  
+    .collab-card-img {
+      object-fit: contain;
+      width: 100px;
+      height: 70px;
+    }
+  
+    .collab-cards .collab-card:first-child {
+      margin-left: 4px;
+    }
+  }

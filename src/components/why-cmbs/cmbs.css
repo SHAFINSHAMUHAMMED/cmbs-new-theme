@@ -1,0 +1,68 @@
+/* Swiss school section */
+
+.why-cmbs {
+  max-width: 995px;
+  margin: auto;
+  margin-top: 69px;
+}
+
+.cmbs-h2 {
+  text-align: center;
+}
+
+.cmbs-p-main {
+  max-width: 641px;
+  margin: auto;
+  margin-top: 34px;
+}
+
+.cmbs-p-main .p-margine {
+  color: #305C62;
+  font-size: 18px;
+}
+.cmba-lottie1 {
+  display: block;
+}
+.cmba-lottie-mob {
+  display: none;
+}
+
+@media only screen and (max-width: 1180px) {
+  .why-cmbs {
+    max-width: 90%;
+    margin-top: 50;
+  }
+  .cmbs-h2 {
+    width: 90%;
+    margin: auto;
+  }
+
+  .cmbs-p-main {
+    margin-top: 25px;
+    max-width: 80%;
+  }
+
+  .cmbs-p-main .p-margine {
+    font-size: 16px;
+  }
+}
+
+@media only screen and (max-width: 640px) {
+  
+.why-cmbs {
+  margin-top:46px ;
+}
+  .cmbs-h2 {
+    width: 90%;
+  }
+
+  .cmbs-p-main {
+   max-width: 95%;
+  }
+  .cmba-lottie1 {
+    display: none;
+  }
+  .cmba-lottie-mob {
+    display: block;
+  }
+}

@@ -1,0 +1,528 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+@font-face {
+  font-family: 'SK Modernist Bold';
+  src: url('./assets/fonts/Sk-Modernist-Bold.otf') format('opentype');
+  /* OTF format */
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'SK Modernist Mono';
+  src: url('./assets/fonts/Sk-Modernist-Mono.otf') format('opentype');
+  /* OTF format */
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'SK Modernist Regular';
+  src: url('./assets/fonts/Sk-Modernist-Regular.otf') format('opentype');
+  /* OTF format */
+  font-weight: normal;
+  font-style: normal;
+}
+
+p {
+  color: #0B434B;
+  font-family: 'SK Modernist Regular';
+  font-size: 20px;
+  line-height: 30px;
+  user-select: none;
+}
+
+h1 {
+  color: #0B434B;
+  font-family: 'SK Modernist Bold';
+  font-size: 53px;
+}
+
+h2 {
+  color: #0B434B;
+  font-family: 'SK Modernist Bold';
+  font-size: 40px;
+}
+
+h3 {
+  color: #0B434B;
+  font-family: 'SK Modernist Regular';
+  font-size: 26px;
+}
+
+h4 {
+  color: #0B434B;
+  font-family: 'SK Modernist Regular';
+  font-size: 23px;
+}
+
+h5 {
+  color: #0B434B;
+  font-size: 20px;
+}
+
+h6 {
+  color: #0B434B;
+  font-family: 'SK Modernist Regular';
+  font-size: 18px;
+}
+/* .body {
+  overflow-x:hidden ;
+} */
+
+button {
+  font-family: 'SK Modernist Bold';
+  color: #FFF;
+  font-size: 22.564px;
+  font-style: normal;
+  line-height: 92%;
+  text-transform: uppercase;
+  user-select: none;
+}
+
+.button {
+  font-family: 'SK Modernist Bold';
+  color: #FFF;
+  font-size: 22.564px;
+  font-style: normal;
+  line-height: 92%;
+  text-transform: uppercase;
+  text-align: center;
+  user-select: none;
+
+}
+
+.darkButton2 {
+  justify-content: flex-start;
+}
+
+.highlight-green {
+  color: #8CFFAF;
+  box-sizing: border-box;
+  word-wrap: break-word;
+}
+
+.highlight-orange {
+  color: #EE9B4E;
+}
+
+.claim-description {
+  margin: auto;
+  max-width: 483px;
+  text-align: center;
+  font-size: 15px;
+  font-style: normal;
+  line-height: 136%;
+  font-weight: 400;
+  padding-top: 16px;
+}
+
+.claim-description-2 {
+  color: rgba(11, 67, 75, 0.79);
+  margin: 0px;
+  max-width: 483px;
+  text-align: center;
+  font-size: 15px;
+  font-style: normal;
+  line-height: 136%;
+  font-weight: 400;
+  padding-top: 16px;
+}
+.custom-underline {
+  text-decoration: none;
+  position: relative;
+  display: inline;
+}
+
+.custom-underline::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-image: url('./assets/svg/underline_blue.svg');
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+
+.wavy-underline {
+  position: relative;
+  display: inline;
+}
+
+.wavy-underline::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 0;
+  width: 100%;
+  height: 20px;
+  background-image: url('./assets/svg/wawyUnderline.svg');
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+
+.wavy-underline-orange2 {
+  position: relative;
+  display: inline;
+}
+
+.wavy-underline-orange2::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 0;
+  width: 100%;
+  height: 20px;
+  background-image: url('./assets/svg/wawyUnderlineOrange.svg');
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+.wavy-underline-orange-small {
+  position: relative;
+  display: inline;
+}
+
+.wavy-underline-orange-small::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 0;
+  width: 100%;
+  height: 20px;
+  background-image: url('./assets/svg/wawyUnderlineOrange-small.svg');
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+
+.wavy-underline-green {
+  position: relative;
+  display: inline;
+}
+
+.wavy-underline-green::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 0;
+  width: 100%;
+  height: 20px;
+  background-image: url('./assets/svg/wawyUnderlineGreen.svg');
+  background-repeat: no-repeat;
+  background-position: bottom;
+}
+
+.wavy-underline-green2 {
+  position: relative;
+  display: inline;
+}
+
+.wavy-underline-green2::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 0;
+  width: 100%;
+  height: 20px;
+  background-image: url('./assets/svg/wawyUnderlineGreen2.svg');
+  background-repeat: no-repeat;
+  background-position: bottom;
+}
+.underline-green {
+  background-image: url('./assets/svg/underline_greensvg.svg');
+  background-position: bottom;
+  background-repeat: no-repeat;
+  background-size: 100% ;
+  position: relative;
+  text-decoration: none;
+}
+.underline-green-large {
+  background-image: url('./assets/svg/underline_green.svg');
+  background-position: bottom;
+  background-repeat: no-repeat;
+  background-size: 100%;
+  position: relative;
+  text-decoration: none;
+}
+.wavy-underline-violet {
+  position: relative;
+  display: inline;
+}
+
+.wavy-underline-violet::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 0;
+  width: 100%;
+  height: 20px;
+  background-image: url('./assets/svg/wawyUnderlineViolet.svg');
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+.blur-effect {
+  filter: opacity(.3);
+}
+
+.main-head-h2 {
+  text-align: center;
+  font-family: 'SK Modernist Bold';
+  font-size: 53px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 104%; /* 55.12px */
+  }
+
+  .main-p {
+    font-family: 'SK Modernist Regular';
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 136%; /* 24.48px */
+  }
+
+/* /////animations\\\\\\ */
+
+.light-effect-button {
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.light-effect-button span {
+  display: block;
+  position: relative;
+  z-index: 1;
+}
+
+.light-effect-button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: -150%;
+  width: 90px;
+  height: 100%;
+  background: hsla(0, 0%, 100%, 0.123);
+  transform: translateY(-50%) skewX(-20deg);
+  animation: lightEffect 1.5s linear infinite;
+}
+
+@keyframes lightEffect {
+  0% {
+    left: -350%;
+    opacity: 0;
+  }
+
+  25% {
+    opacity: 1;
+  }
+
+  75% {
+    opacity: 1;
+  }
+
+  100% {
+    left: 150%;
+    opacity: 0;
+  }
+}
+
+.animated-icon-1 {
+  animation: breathing 3s ease-in-out infinite;
+}
+
+.animated-icon-2 {
+  animation: breathing 3.5s ease-in-out infinite;
+}
+
+.animated-icon-3 {
+  animation: breathing 4s ease-in-out infinite;
+}
+
+@keyframes breathing {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.fadeInn {
+  animation: fadeInn 0.5s ease-in forwards;
+}
+
+.fadeOutt {
+  animation: fadeOutt 0.5s ease-out forwards;
+}
+
+@keyframes fadeInn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOutt {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+/* //tablet */
+
+@media only screen and (max-width: 1180px) {
+
+  h1 {
+    font-size: 37px;
+  }
+
+  h2 {
+    font-size: 27px;
+  }
+
+  h3 {
+    font-size: 25px;
+  }
+
+  h4 {
+    font-size: 19px;
+  }
+
+  h5 {
+    font-size: 17px;
+  }
+
+  h6 {
+    font-size: 16px;
+  }
+
+  .button {
+    font-size: 18px;
+  }
+
+  .darkButton2 {
+    justify-content: center;
+  }
+
+  .claim-description {
+    margin: auto;
+    max-width: 288px;
+    text-align: center;
+    font-size: 11px;
+    font-style: normal;
+    line-height: 136%;
+    font-weight: 400;
+    padding-top: 16px;
+  }
+
+  .claim-description-2 {
+    color: rgba(11, 67, 75, 0.79);
+    margin: auto;
+    max-width: 288px;
+    text-align: center;
+    font-size: 13px;
+    font-style: normal;
+    line-height: 136%;
+    font-weight: 400;
+    padding-top: 16px;
+  }
+  .main-head-h2 {
+    text-align: center;
+    font-family: 'SK Modernist Bold';
+    font-size: 37px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 104%; /* 55.12px */
+    }
+    .main-p {
+      font-size: 18px;
+    }
+}
+
+@media only screen and (max-width: 640px) {
+
+  h1 {
+    font-size: 37px;
+  }
+
+  h2 {
+    font-size: 27px;
+  }
+
+  h3 {
+    font-size: 25px;
+  }
+
+  h4 {
+    font-size: 19px;
+  }
+
+  h5 {
+    font-size: 17px;
+  }
+
+  h6 {
+    font-size: 16px;
+  }
+
+  .button {
+    font-size: 15px;
+
+  }
+
+  .darkButton2 {
+    justify-content: center;
+  }
+
+  .claim-description {
+    margin: auto;
+    max-width: 288px;
+    text-align: center;
+    font-size: 11px;
+    font-style: normal;
+    line-height: 136%;
+    font-weight: 400;
+    padding-top: 16px;
+  }
+
+  .claim-description-2 {
+    color: rgba(11, 67, 75, 0.79);
+    margin: auto;
+    max-width: 288px;
+    text-align: center;
+    font-size: 11px;
+    font-style: normal;
+    line-height: 136%;
+    font-weight: 400;
+    padding-top: 16px;
+  }
+  .main-head-h2 {
+    font-size: 37px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 105%; /* 38.85px */
+  }
+  .main-p {
+    font-size: 16px;
+  }
+}
+
+@media only screen and (max-width:325px) {
+  .button {
+    font-size: 12px;
+  }
+}

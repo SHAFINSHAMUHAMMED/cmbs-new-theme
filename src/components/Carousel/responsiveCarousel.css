@@ -1,0 +1,243 @@
+.carousel {
+  max-width: 1180px;
+  margin: auto;
+  /* transform: translateY(-150px); */
+  margin-top: -30px;
+  border-radius: 55px;
+  box-shadow: -38px 7px 115.2px 0px rgba(209, 233, 222, 0.54);
+  background: #FFF;
+  font-weight: bold;
+  z-index: 5;
+  position: relative;
+}
+
+.carousel-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  width: 291px;
+  height: 247px;
+  padding: 0px 20px 0px 20px;
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+.carousel-card:hover {
+  border-radius: 40px;
+  border: 1px solid #FFF;
+  background: #0C93A7;
+  box-shadow: 0px 18px 41.8px 0px rgba(0, 156, 179, 0.33);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease, border 0.3s ease;
+  transform: scale(1.03);
+}
+
+.carousel-card:hover .carousel-svg circle {
+  fill: rgba(255, 255, 255, 0.50);
+}
+
+.carousel-card:hover .carousel-svg path {
+  fill: white;
+}
+
+.carousel-card:hover h4 {
+  transition: color 0.3s ease;
+}
+
+.carousel h4 {
+  font-family: 'SK Modernist Bold';
+  ;
+  font-size: 22px;
+}
+
+.carousel-card:hover h4 {
+  color: #FFF;
+
+}
+
+.carousel-svg {
+  width: 73px;
+  height: 73px;
+}
+
+@media only screen and (max-width: 1180px) {
+  .carousel {
+    max-width: 95%;
+    margin: 0px 20px 0px 20px;
+    margin: auto;
+    margin-top: -20px;
+    background: white;
+    border-radius: 20px;
+    font-weight: bold;
+    overflow-y: visible;
+    box-shadow: none;
+
+  }
+
+  .carousel-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 25px 50px 15px 50px;
+    width: 250px;
+    transition: none;
+  }
+
+  .carousel-card:hover {
+    border: none;
+    background: transparent;
+    box-shadow: none;
+    transform: none;
+  }
+
+  .carousel-card:hover .carousel-svg circle {
+    fill: inherit;
+  }
+
+  .carousel-card:hover .carousel-svg path {
+    fill: inherit;
+  }
+
+  .carousel h4:hover {
+    color: inherit;
+  }
+
+  .carousel .react-multi-carousel-item {
+    display: flex;
+    justify-content: center !important;
+  }
+
+  .carousel-svg {
+    width: 56px;
+    height: 56px;
+  }
+
+  .carousel h4 {
+    font-family: 'SK Modernist Bold';
+    font-size: 17px;
+  }
+
+  .carousel .react-multi-carousel-list {
+    overflow-x: hidden;
+    overflow-y: hidden;
+    align-items: flex-start;
+    height: 260px;
+  }
+
+  .carousel .react-multi-carousel-dot-list {
+    gap: 10px;
+    height: 20px;
+    align-items: center;
+
+  }
+
+  .carousel .react-multi-carousel-dot--active button {
+    background: #259D4A;
+    border: none;
+    position: relative;
+  }
+
+  .carousel .react-multi-carousel-dot {
+    transform: scale(1.3);
+  }
+
+  .carousel .react-multi-carousel-dot button:not(.react-multi-carousel-dot--active button) {
+    border: none;
+    background-color: rgba(37, 157, 74, 0.25);
+
+  }
+}
+
+@media only screen and (max-width: 640px) {
+  .carousel {
+    max-width: 95%;
+    margin: 0px 20px 0px 20px;
+    margin: auto;
+    /* transform: translateY(-45px); */
+    margin-top: -15px;
+    background: white;
+    border-radius: 20px;
+    font-weight: bold;
+    overflow-y: visible;
+    margin-bottom: 0px;
+  }
+
+  .carousel-card {
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    text-align: center;
+    padding: 25px 20px 15px 20px;
+    z-index: 10;
+  }
+
+  .carousel-svg {
+    width: 56px;
+    height: 56px;
+  }
+
+  .carousel h4 {
+    font-family: 'SK Modernist Bold';
+    ;
+    font-size: 17px;
+  }
+
+  .carousel .react-multi-carousel-list {
+    /* overflow: visible !important; */
+    overflow-x: hidden !important;
+  }
+
+  .carousel .react-multi-carousel-track {
+    overflow-y: visible !important;
+    gap: 2px;
+  }
+
+  .carousel .react-multi-carousel-list {
+    overflow-x: hidden;
+    overflow-y: hidden;
+    align-items: flex-start;
+    height: 190px;
+  }
+
+  .carousel .react-multi-carousel-dot-list {
+    transform: translateY(2px);
+    gap: 10px;
+  }
+
+  .carousel .react-multi-carousel-dot--active button {
+    background: #259D4A;
+    border: none;
+    position: relative;
+  }
+
+  .carousel .react-multi-carousel-dot {
+    transform: scale(1.3);
+  }
+
+  .carousel .react-multi-carousel-dot button:not(.react-multi-carousel-dot--active button) {
+    border: none;
+    background-color: rgba(37, 157, 74, 0.25);
+
+  }
+
+  .carousel-main {
+    position: relative;
+    z-index: 0;
+
+  }
+
+  .carousel-main::after {
+    position: absolute;
+    content: '';
+    background-color: rgba(0, 0, 0, 0.196);
+    width: 1px;
+    height: 150px;
+    top: 0px;
+    left: 50%;
+    z-index: 0;
+  }
+
+}

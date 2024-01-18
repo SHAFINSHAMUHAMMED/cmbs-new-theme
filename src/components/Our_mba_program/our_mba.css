@@ -1,0 +1,117 @@
+.our-mba-main {
+    position: relative;
+    margin-top: 35px;
+  } 
+  
+  .our-mba-inner {
+    max-width: 1180px;
+    margin: auto;
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0px;
+  }
+  
+  .our-mba-inner-1 {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+  }
+  
+  .our-mba-inner h2 {
+    color: #0B434B;
+    width: 580px;
+    text-align: left;
+    margin-bottom:31px ;
+  }
+  .our-mba-p {
+    width: 569px;
+    padding: 0px 0px 40px 0px;
+    color: #0B434B;;
+  }
+
+  .our-mba-img-1 {
+    display: none;
+  }
+  .our-mba-img-2 {
+    display: block;
+    width: 645px;
+    /* height: 986px; */
+  }
+  .our-mba-button {
+    margin-top: 10px;
+  }
+
+@media only screen and (max-width: 1180px) {
+    .our-mba-main {
+        margin-top: 30px;
+
+      }
+    
+      .our-mba-inner {
+        flex-direction: column;
+        max-width: 100%;
+        padding: 20px 0px 30px 0px;
+      }
+    
+      .our-mba-inner-1 {
+        align-items: center;
+      }
+    
+      .our-mba-img-1 {
+        display: block;
+        width: 60%;
+      }
+    
+      .our-mba-img-2 {
+        display: none;
+    
+      }
+    
+      .our-mba-inner h2 {
+        width: 85%;
+        text-align: center;
+        margin-bottom:30px ;
+      }
+      .our-mba-p {
+        width: 85%;
+        margin-bottom: 20px;
+        padding: 20px 20px 0px 20px;
+      }
+      .our-mba-button {
+        margin-top: 40px;
+      }
+}
+@media only screen and (max-width: 640px) {
+    .our-mba-main {
+        margin-top: 44px;
+      }
+    
+      .our-mba-inner {
+        padding: 10px 0px 20px 0px;
+      }
+    
+      .our-mba-img-1 {
+        width: 100%;
+      }
+    
+      .our-mba-img-2 {
+        display: none;
+    
+      }
+    
+      .our-mba-inner h2 {
+        width: 75%;
+        margin-bottom:30px ;
+      }
+      .our-mba-p {
+        width: 84%;
+        margin-bottom: 20px;
+        padding: 20px 0px 0px 0px;
+      }
+       .our-mba-button {
+         margin-top: 6px;
+       }
+}

@@ -1,0 +1,101 @@
+.theory-main {
+  max-width: 1166px;
+  height: 380px;
+  border-top-left-radius: 43px;
+  border-top-right-radius: 43px;
+  background: #D3F6E6;
+  margin: auto;
+  margin-top: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.theory-sub {
+  width: 492px;
+  transform: translateX(80px);
+}
+.theory-sub h3 {
+  width:301px ;
+  color: #0B434B;
+font-family: 'SK Modernist Bold';
+font-size: 32.376px;
+font-style: normal;
+font-weight: 700;
+line-height: 118%; /* 38.203px */
+margin-bottom: 16px;
+}
+.theory-img {
+  width: 511px;
+  height: 428px;
+  transform: translateY(-40px);
+  z-index: 1;
+}
+.pattern1 {
+  width:110px ;
+  height:110px ;
+position: absolute;
+left: -40px;
+top: 50%;
+}
+@media only screen and (max-width: 1180px) {
+  .theory-main {
+    max-width: 95%;
+    height: 100%;
+    border-top-left-radius: 33px;
+    border-top-right-radius: 33px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding-top: 50px;
+    padding-bottom: 10px;
+  }
+  .theory-sub {
+    width: 80%;
+    transform: translateX(0px);
+  }
+  .theory-sub h3 {
+    width:100% ;
+  font-size: 28px;
+  margin-bottom: 12px;
+  }
+  .theory-img {
+    width: 411px;
+    height: 328px;
+    transform: translateY(0px);
+    z-index: 1;
+  }
+  .pattern1 {
+    width:100px ;
+    height:100px ;
+  position: absolute;
+  left: -15px;
+  top: 50%;
+  }
+}
+
+@media only screen and (max-width: 640px) {
+  .theory-main {
+    border-top-left-radius: 38px;
+    border-top-right-radius: 38px;
+    padding-top: 42px;
+    margin-top: 40px;
+
+  }
+  .theory-sub {
+    width: 80%;
+  }
+  .theory-sub h3 {
+    width: 80%;
+  font-size: 23px;
+  margin-bottom: 13px;
+  }
+  .theory-img {
+    width: 307px;
+    height: 257px;
+  }
+  .pattern1 {
+   display: none;
+  }
+}
