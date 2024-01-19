@@ -1,7 +1,7 @@
 /* World of possibilities section */
 
 .world-of-possibilities-main {
-  background: #DCFBFF;
+  background: #FFEDEA;
   margin: 0px 10px 0px 10px;
   position: relative;
   padding-top: 80px;
@@ -14,7 +14,7 @@
   margin: auto;
   margin-bottom: 30px;
   text-align: center;
-  padding: 0px 10px 0px 10px;
+  padding: 0px 0px 0px 0px;
   line-height: 104%;
 }
 
@@ -30,7 +30,7 @@
   background-size: contain;
   margin: auto;
   margin-top: 0px;
-  border-bottom: 2.5px solid rgba(11, 67, 75, 0.10);
+  border-bottom: 2.5px solid rgba(11, 67, 75, 0.1);
   padding-top: 0px;
   height: 713px;
 }
@@ -84,7 +84,7 @@
 
 .world-of-possibilities-card h1 {
 
-  color: #1F6671;
+  color: #1B0160;
   font-size: 76.494px;
   font-style: normal;
   font-weight: 700;
@@ -94,7 +94,7 @@
 
 .world-of-possibilities-card span {
   font-family: 'SK Modernist Regular';
-  color: #0B434B;
+  color: #1B0160;
   font-size: 36.817px;
   font-style: normal;
   font-weight: 400;
@@ -145,14 +145,14 @@
 }
 
 .world-of-possibilities-2-card p {
-  color: #0C434B;
+  color: #352A52;
   font-size: 19.043px;
   line-height: 136%;
   padding: 0px 20px 0px 50px;
 }
 
 .world-of-possibilities-2-card:hover {
-  background-color: #259D4A;
+  background-color: #1A0060;
   color: #fff;
 }
 

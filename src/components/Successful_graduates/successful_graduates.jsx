@@ -59,7 +59,7 @@ function successful_graduates() {
         </Marquee>
       </div>
       <ButtonDark duration={2400} containerStyle={{ justifyContent: 'center' }}/>
-      <Claim_description color='rgba(11, 67, 75, 0.79)'/>
+      <Claim_description color='rgba(76, 70, 91, 0.79)'/>
     </div>
   );
 }

@@ -109,7 +109,7 @@ function acreditions() {
           duration={2500}
           containerStyle={{ justifyContent: "center" }}
         />
-        <Claim_description color="rgba(11, 67, 75, 0.79)" />
+        <Claim_description color="rgba(53, 42, 82, 0.79)" />
       </div>
       {/* </div> */}
     </div>

@@ -3,7 +3,9 @@
   height: 380px;
   border-top-left-radius: 43px;
   border-top-right-radius: 43px;
-  background: #D3F6E6;
+  background: rgba(102, 23, 255, 0.06);
+
+  ;
   margin: auto;
   margin-top: 50px;
   display: flex;
@@ -17,7 +19,7 @@
 }
 .theory-sub h3 {
   width:301px ;
-  color: #0B434B;
+  color: #514573;
 font-family: 'SK Modernist Bold';
 font-size: 32.376px;
 font-style: normal;

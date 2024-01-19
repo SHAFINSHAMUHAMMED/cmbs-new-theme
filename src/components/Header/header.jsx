@@ -135,7 +135,7 @@ function header() {
                         duration={1000}
                         onClick={() => setShowList(false)}
                       >
-                        <button className="bg-[#0B434B] text-white cursor-pointer">
+                        <button className="bg-[#8E24ED] text-white cursor-pointer">
                           BOOK A FREE CONSULTATION
                         </button>
                       </Link>
@@ -287,7 +287,7 @@ function header() {
                       duration={1000}
                       onClick={() => setShowList(false)}
                     >
-                      <button className="ct-button bg-[#0B434B] text-white cursor-pointer">
+                      <button className="ct-button bg-[#8E24ED] text-white cursor-pointer">
                         BOOK A FREE CONSULTATION
                       </button>
                     </Link>

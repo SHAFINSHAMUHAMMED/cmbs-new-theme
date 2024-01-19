@@ -1,14 +1,12 @@
 import React, { useState } from "react";
-import '../Icf_certification/icf.css'
+import "../Icf_certification/icf.css";
 import Claim_description from "../Description/claim_description";
-import 'react-phone-input-2/lib/style.css';
-import PhoneInput from 'react-phone-input-2';
+import "react-phone-input-2/lib/style.css";
+import PhoneInput from "react-phone-input-2";
 import Lottie from "lottie-react";
-import { ClipLoader } from 'react-spinners';
-import arrow from "../../assets/arrow.json"
+import { ClipLoader } from "react-spinners";
+import arrow from "../../assets/arrow.json";
 import MultiStepProgressBar from "../Progress_bar/MultiStepProgressBar";
-
-
 
 const MultiStepForm = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -29,7 +27,6 @@ const MultiStepForm = () => {
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-
 
   const validateCurrentStep = () => {
     let errors = {};
@@ -69,19 +66,19 @@ const MultiStepForm = () => {
           isValid = false;
         }
         break;
-        case 5:
-    const digits = formData.whatsapp.replace(/\D/g, '');
-    if (!formData.whatsapp.trim()) {
-      errors.whatsapp = "WhatsApp number is required";
-      isValid = false;
-    } else if (digits.length > 15) {
-      errors.whatsapp = "Phone number is too long";
-      isValid = false;
-    } else if (digits.length < 8) {
-      errors.whatsapp = "Phone number is too short";
-      isValid = false;
-    }
-    break;
+      case 5:
+        const digits = formData.whatsapp.replace(/\D/g, "");
+        if (!formData.whatsapp.trim()) {
+          errors.whatsapp = "WhatsApp number is required";
+          isValid = false;
+        } else if (digits.length > 15) {
+          errors.whatsapp = "Phone number is too long";
+          isValid = false;
+        } else if (digits.length < 8) {
+          errors.whatsapp = "Phone number is too short";
+          isValid = false;
+        }
+        break;
       default:
         break;
     }
@@ -110,7 +107,7 @@ const MultiStepForm = () => {
     "MBA in Healthcare Management ",
     "MBA in Human Resources ",
     "MBA in Marketing ",
-    "MBA in Supply Chain Management"
+    "MBA in Supply Chain Management",
 
     // Add optins
   ];
@@ -156,8 +153,8 @@ const MultiStepForm = () => {
       if (e.key === "Enter") {
         if (currentStep < 5) {
           nextStep();
-        }else {
-          handleSubmit()
+        } else {
+          handleSubmit();
         }
       }
     };
@@ -189,19 +186,19 @@ const MultiStepForm = () => {
             </h2>
             <p>We want to make sure your journey is tailored just for you.</p>
             <div class="custom-select">
-  <select
-    name="specialization"
-    value={formData.specialization}
-    onChange={handleChange}
-  >
-    <option value="">Select Specialization</option>
-    {specializationOptions.map((option, index) => (
-      <option key={index} value={option}>
-        {option}
-      </option>
-    ))}
-  </select>
-</div>
+              <select
+                name="specialization"
+                value={formData.specialization}
+                onChange={handleChange}
+              >
+                <option value="">Select Specialization</option>
+                {specializationOptions.map((option, index) => (
+                  <option key={index} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+            </div>
 
             {renderError("specialization")}
           </>
@@ -257,20 +254,19 @@ const MultiStepForm = () => {
             {renderError("email")}
           </>
         );
-        case 5:
+      case 5:
         return (
           <>
-            <h2>
-            And Phone Number?
-            </h2>
+            <h2>And Phone Number?</h2>
             <PhoneInput
-      country={'ae'}
-      value={formData.whatsapp}
-      placeholder={"Type Here..."}
-      onKeyDown={handleKeyPress}
-      
-      onChange={(phone) => setFormData({ ...formData, whatsapp: phone })}
-    />
+              country={"ae"}
+              value={formData.whatsapp}
+              placeholder={"Type Here..."}
+              onKeyDown={handleKeyPress}
+              onChange={(phone) =>
+                setFormData({ ...formData, whatsapp: phone })
+              }
+            />
             {renderError("whatsapp")}
           </>
         );
@@ -283,29 +279,30 @@ const MultiStepForm = () => {
     <div className="icf-form-main" id="contactForm">
       {/* progress steps */}
       <MultiStepProgressBar currentStep={currentStep} />
-       <form className="icf-form" onSubmit={(e) => e.preventDefault()}>
-      {renderForm()}
-      <div className="button-wrapper">
-  <button type="button" onClick={nextStep} >
-  {currentStep < 5 && "CONTINUE"}
-  {currentStep === 5 && !isLoading && "Claim Your Free Consultation Now"}
-    {currentStep < 5 && showAnimation && (
-      <Lottie
-        animationData={arrow}
-        loop={true}
-        className="icf-button-lottie"
-      />
-    )}
-    {currentStep === 5 && isLoading && (
-    <ClipLoader color={"#ffffff"} size={20} />
-  )}
-  </button>
-</div>
-
-    </form>
-      <div className="form-svg-bg" >
+      <form className="icf-form" onSubmit={(e) => e.preventDefault()}>
+        {renderForm()}
+        <div className="button-wrapper">
+          <button type="button" onClick={nextStep}>
+            {currentStep < 5 && "CONTINUE"}
+            {currentStep === 5 &&
+              !isLoading &&
+              "Claim Your Free Consultation Now"}
+            {currentStep < 5 && showAnimation && (
+              <Lottie
+                animationData={arrow}
+                loop={true}
+                className="icf-button-lottie"
+              />
+            )}
+            {currentStep === 5 && isLoading && (
+              <ClipLoader color={"#ffffff"} size={20} />
+            )}
+          </button>
+        </div>
+      </form>
+      <div className="form-svg-bg">
         <svg
-        className="icf-form-main-svg "
+          className="icf-form-main-svg"
           xmlns="http://www.w3.org/2000/svg"
           width="156"
           height="75"
@@ -314,14 +311,14 @@ const MultiStepForm = () => {
         >
           <path
             d="M39.2891 1L39.2891 128"
-            stroke="#0B434B"
+            stroke="#1E1E1E"
             stroke-width="2"
             stroke-linecap="round"
             stroke-linejoin="round"
           />
           <path
             d="M20.9297 110.985L39.2003 129.256L57.4709 110.985"
-            stroke="#0B434B"
+            stroke="#1E1E1E"
             stroke-width="2"
             stroke-linecap="round"
             stroke-linejoin="round"
@@ -331,12 +328,12 @@ const MultiStepForm = () => {
             cy="118.209"
             r="36.7907"
             transform="rotate(-90 37.7907 118.209)"
-            stroke="#259D4A"
+            stroke="#DE66C0"
             stroke-width="2"
           />
         </svg>
       </div>
-      <Claim_description color="rgba(11, 67, 75, 0.79)" />
+      <Claim_description color="rgba(76, 70, 91, 0.79)" />
     </div>
   );
 };

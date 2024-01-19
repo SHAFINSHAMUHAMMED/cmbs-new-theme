@@ -17,7 +17,7 @@ function footer() {
           | Privacy Policy |
         </a>{" "}
       </p>
-      <h6 className="text-[11px] md:text-[14px] ">
+      <h6 className="text-[11px] md:text-[14px] text-[#17444C] ">
         Landing Page & Digital Marketing By{" "}
         <a
           href="https://webqmedia.com/"

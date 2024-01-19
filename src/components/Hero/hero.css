@@ -25,7 +25,7 @@
 .hero-section {
   margin: 10px 10px 0px 10px;
 
-  background-color: #E6FAF1;
+  background-color: #F8F1FF;
   /* align-items: flex-end; */
   border-top-left-radius: 48px;
   border-top-right-radius: 48px;
@@ -61,7 +61,7 @@
 .hero-headline {
   width:664px;
   text-align: left;
-  color: #0B434B;
+  color: #1A0060;
   font-size: 62px;
   line-height: 57px;
 }
@@ -71,7 +71,7 @@
 
 
 .hero-left p {
-  color: #1A555D;
+  color: #514573;
   font-size: 20px;
   width: 592px;
   padding-top: 27px;

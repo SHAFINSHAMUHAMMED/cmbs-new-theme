@@ -16,7 +16,7 @@ function collaboration_carousel() {
   return (
     <div class="collab-main">
         <h2 class=" main-head-h2 collab-h1 text-center">
-        After the Cap and Gown: Discover Where <span className='text-[#259D4A]'>Our Alumni Thrive</span>
+        After the Cap and Gown: Discover Where <span className='text-[#8E24ED]'>Our Alumni Thrive</span>
         </h2>
         <div className=" acredits-marquee-1">
           <Marquee speed={200} pauseOnClick="true">

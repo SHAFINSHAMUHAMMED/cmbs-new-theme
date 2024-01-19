@@ -12,11 +12,12 @@
   justify-content: center;
   align-items: flex-end;
   position: relative;
+  padding-bottom: 50px;
   background-image: url('../../assets/earth.webp');
   background-position: top;
   background-repeat: no-repeat;
-  background-size: 903px 528px;
-  min-height: 800px;
+  /* background-size: 903px 528px; */
+  min-height: 850px;
   overflow: hidden;
 
 }
@@ -145,6 +146,8 @@
     background-size: 400px 228px;
     min-height: 720px;
     align-items: flex-end;
+  padding-bottom: 20px;
+
 
   }
 

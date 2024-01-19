@@ -39,7 +39,7 @@ function student_support() {
           Connect With An Advisor
         </Link>
       </div>
-      <Claim_description color="rgba(11, 67, 75, 0.79)" />
+      <Claim_description color="rgba(76, 70, 91, 0.79)" />
     </div>
   );
 }

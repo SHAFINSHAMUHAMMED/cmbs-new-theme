@@ -10,7 +10,7 @@ function from_writing() {
         <div className=" our-mba-inner-1">
           <h2 className="main-head-h2">
             Our MBA Programs: Diverse, In-Depth, and{" "}
-            <span className="text-[#259D4A]">Globally Connected</span>
+            <span className="text-[#8E24ED]">Globally Connected</span>
           </h2>
           <img className="our-mba-img-1" src={ourMba} alt="" />
 

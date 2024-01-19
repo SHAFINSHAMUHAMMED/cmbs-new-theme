@@ -59,8 +59,8 @@
   width: 70px;
   height: 70px;
   border: none;
-  -webkit-box-shadow: 0 0 0 0 #259D4A;
-  box-shadow: 0 0 0 0 #259D4A;
+  -webkit-box-shadow: 0 0 0 0 #ff66ccb5;
+  box-shadow: 0 0 0 0 #ff66cc89;
   border-radius: 50%;
   cursor: pointer;
   -webkit-animation: pulse 1.8s cubic-bezier(.66, 0, 0, 1) infinite;
@@ -174,7 +174,7 @@
 }
 
 .user-review-card p {
-  color: #24626A;
+  color: #4c465bf0;
   font-size: 18px;
   font-style: normal;
   font-weight: 400;

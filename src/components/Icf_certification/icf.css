@@ -1,14 +1,15 @@
 /* ICF certification section */
 
 .icf-certification-main {
-  background-color: #EDE6D8;
+  background-color: #F6EDFF;
   position: relative;
 }
 
 .icf-certification-pattern-1 {
-  width: auto;
+  width: 100%;
   display: block;
   overflow-x: hidden;
+
 }
 
 .icf-certification-pattern-2 {
@@ -45,7 +46,7 @@
 .progress-bar {
   width: 0;
   height: 100%;
-  background-color: #DD8534;
+  background-color: #6617FF;
   text-align: center;
   border-radius: 31px;
   position: relative;
@@ -58,7 +59,7 @@
   content: '';
   width: 100px;
   height: 100%;
-  background: linear-gradient(to right, transparent, rgba(240, 211, 211, 0.388), transparent);
+  background: linear-gradient(to right, transparent, rgba(236, 223, 223, 0.162), transparent);
   position: absolute;
   top: 0;
   left: -100px;
@@ -119,7 +120,7 @@
 }
 
 .form-svg-bg {
-  background: #EDE6D8;
+  background: #F6EDFF;
   width: 150px;
   height: 155px;
   position: absolute;
@@ -263,7 +264,7 @@
   align-items: center;
   justify-content: center;
   width: 100%;
-  background: #0B434B;
+  background: #8E24ED;
   border-radius: 91.765px;
   padding: 26px 0px 30px 0px;
   margin-bottom: 18px;
@@ -355,7 +356,7 @@
   }
 
   .form-svg-bg {
-    background: #EDE6D8;
+    background: #F6EDFF;
     width: 63px;
     position: absolute;
     top: -50px;
@@ -525,7 +526,7 @@
   }
 
   .form-svg-bg {
-    background: #EDE6D8;
+    background: #F6EDFF;
     width: 63px;
     position: absolute;
     top: -50px;

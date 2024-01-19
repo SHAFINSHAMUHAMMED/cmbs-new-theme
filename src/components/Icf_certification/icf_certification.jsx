@@ -50,8 +50,8 @@ function icf_certification() {
           </div>
         </div>
         <h1>
-          Claim Your <span className="text-[#259D4A]">Free Career</span>{" "}
-          <span className="text-[#259D4A]"> Consultation</span> With Our ICF
+          Claim Your <span className="text-[#8E24ED]">Free Career</span>{" "}
+          <span className="text-[#8E24ED]"> Consultation</span> With Our ICF
           Certified Career Coach & Get{" "}
           <span className="wavy-underline-green">Scholarships</span>{" "}
           <span className="wavy-underline-green"> Of Upto 30%</span> <br />
