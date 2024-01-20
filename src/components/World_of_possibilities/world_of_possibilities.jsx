@@ -414,7 +414,7 @@ function world_of_possibilities() {
               onClick={togglePopup}
               className="flex gap-3 sm:gap-6 items-center cursor-pointer"
             >
-              <h3 className="underline">Download Free Brochure Now</h3>
+              <h3 className="underline underline-offset-[3px]">Download Free Brochure Now</h3>
 
               <svg
                 xmlns="http://www.w3.org/2000/svg"

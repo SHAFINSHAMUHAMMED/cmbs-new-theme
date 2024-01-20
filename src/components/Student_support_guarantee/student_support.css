@@ -8,13 +8,6 @@
   margin-top: 50px;
 }
 
-.student-support-img-1 {
-  display: block;
-}
-
-.student-support-img-2 {
-  display: none;
-}
 
 .student-support-sub {
   display: flex;
@@ -54,14 +47,6 @@
     margin-top: 40px;
   }
 
-  .student-support-img-1 {
-    display: none;
-  }
-
-  .student-support-img-2 {
-    display: block;
-  }
-
   .student-support-sub img {
     width: 85%;
     margin-bottom: 33px;
@@ -85,14 +70,6 @@
   .student-support-main {
     padding: 30px 0px 30px 0px;
     margin-top: 20px;
-  }
-
-  .student-support-img-1 {
-    display: none;
-  }
-
-  .student-support-img-2 {
-    display: block;
   }
 
   .student-support-sub img {

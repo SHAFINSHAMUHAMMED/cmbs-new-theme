@@ -12,7 +12,6 @@ function student_support() {
     <div id="guarantee" className="student-support-main">
       <div className="student-support-sub">
         <img className="student-support-img-1" src={student_support1} alt="" />
-        <img className="student-support-img-2" src={student_support2} alt="" />
         {/* <h1 className='hidden md:block'>100% Student Support Guarantee for a Smooth Learning Experience</h1> */}
         <h1>
           100% Student Support Guarantee{" "}

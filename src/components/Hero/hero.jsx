@@ -80,7 +80,7 @@ function hero() {
                 className="flex gap-2 items-center"
                 style={{ cursor: "pointer" }}
               >
-                <h3 className="text-[#1A0060]"><u>Download Free Brochure</u></h3>
+                <h3 className="text-[#1A0060]"><u className="underline-offset-[5px]">Download Free Brochure</u></h3>
                 <svg
                   className="w-[21px] h-[17px] sm:w-[25px] sm:h-[20px] lg:w-[35px] lg:h-[30px]"
                   xmlns="http://www.w3.org/2000/svg"

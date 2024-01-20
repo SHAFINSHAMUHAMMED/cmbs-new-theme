@@ -33,9 +33,12 @@
   border-bottom: 2.5px solid rgba(11, 67, 75, 0.1);
   padding-top: 0px;
   height: 713px;
+  position: relative;
 }
 
 .breathing-image {
+  position: absolute;
+  top: 10%;
   width: 316px;
   height: 316px;
   background: white;
@@ -311,9 +314,9 @@
 
   .breathing-image {
     position: absolute;
-    top: 20%;
-    width: 172px;
-    height: 172px;
+    top: 5%;
+    width: 182px;
+    height: 182px;
   }
 
   .world-of-possibilities-cards {
@@ -452,7 +455,7 @@
 
   .world-of-possibilities-brochure {
     width: 90%;
-    background-color: #0C434B;
+    background-color: #0A012B;
     border-radius: 44px;
     padding: 0px 10px 0px 20px;
     margin: auto;
@@ -539,7 +542,7 @@
 
   .breathing-image {
     position: absolute;
-    top: 10%;
+    top: 2%;
     width: 172px;
     height: 172px;
   }
@@ -642,10 +645,10 @@
 
   .world-of-possibilities-icon-2 {
     position: absolute;
-    width: 50px;
-    height: 50px;
-    left: 80px;
-    bottom: 120px;
+    width: 55px;
+    height: 55px;
+    left: 70px;
+    bottom: 125px;
   }
 
   .world-of-possibilities-icon-3 {
@@ -695,6 +698,7 @@
 
   .world-of-possibilities-brochure h3 {
     font-size: 16px;
+    font-weight: 600;
   }
 
   .world-of-possibilities-brochure svg {
@@ -703,7 +707,8 @@
   }
 
   .swiss-img-1 {
-    width: 358px;
+    width: 328px;
+    margin-top: 20px;
     display: block;
 
   }

@@ -7,7 +7,7 @@ function footer() {
   return (
     <div className="footer-main">
       <img src={footer_logo} alt="footer-logo" />
-      <p>
+      <p className="text-[#5C507E]">
         © {currentYear} Learners University College l All Rights Reserved <br />
         <a
           href="https://www.learnersuae.com/privacy-policy/"
@@ -17,13 +17,13 @@ function footer() {
           | Privacy Policy |
         </a>{" "}
       </p>
-      <h6 className="text-[11px] md:text-[14px] text-[#17444C] ">
+      <h6 className="text-[11px] md:text-[14px] text-[#1d1338] ">
         Landing Page & Digital Marketing By{" "}
         <a
           href="https://webqmedia.com/"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-[#259D4A]"
+          className="text-[#1A0060] font-medium"
         >
           WebQ Media
         </a>
