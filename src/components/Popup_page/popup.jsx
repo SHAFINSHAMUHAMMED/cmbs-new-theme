@@ -5,6 +5,7 @@ import ClipLoader from "react-spinners/ClipLoader";
 import "react-phone-input-2/lib/style.css";
 import PhoneInput from "react-phone-input-2";
 import { CSSTransition } from "react-transition-group";
+import axios from 'axios';
 
 import whatsppIcon from '../../assets/svg/WhatsApp_icon.svg'
 import popImg from '../../assets/popup-img.webp'
@@ -19,6 +20,7 @@ function popup({ closePopup }) {
   const [isLoading, setIsLoading] = useState(false);
   const [isActive, setIsActive] = useState(false);
   const [downloadStarted, setDownloadStarted] = useState(false);
+  const [currentUrl, setCurrentUrl] = useState('');
 
   useEffect(() => {
     // Add delay to active popup animation
@@ -30,6 +32,11 @@ function popup({ closePopup }) {
       clearTimeout(timeout);
     };
   }, []);
+
+  useEffect(() => {
+    setCurrentUrl(window.location.href);
+  }, []);
+
   const handleExit = () => {
     setIsActive(false);
     setTimeout(() => {
@@ -98,15 +105,22 @@ function popup({ closePopup }) {
       setIsLoading(true);
       const loaderTimeout = setTimeout(() => setIsLoading(false), 3000);
 
+      const dataToSend = {
+        ...formData,
+        currentUrl: currentUrl
+      };
+
       try {
         const response = await fetch(
-          "https://connect.pabbly.com/workflow/sendwebhookdata/IjU3NjUwNTY5MDYzZTA0MzA1MjZmNTUzNTUxMzUi_pc",
+          // "https://connect.pabbly.com/workflow/sendwebhookdata/IjU3NjUwNTY5MDYzZTA0MzA1MjZmNTUzNTUxMzUi_pc",
+          "https://connect.pabbly.com/workflow/sendwebhookdata/IjU3NjUwNTZiMDYzNTA0MzA1MjZhNTUzNjUxMzUi_pc",
+
           {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify(formData),
+            body: JSON.stringify(dataToSend),
           }
         );
 

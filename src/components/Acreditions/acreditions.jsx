@@ -4,14 +4,14 @@ import ButtonDark from "../Buttons/buttonDark";
 import Marquee from "react-fast-marquee";
 import Claim_description from "../Description/claim_description";
 
-import iao1 from "../../assets/svg/Accredit-iao-1-icon.svg";
-import iao from "../../assets/svg/Accredit-iao-icon.svg";
-import eduqua from "../../assets/svg/Accredit-eduqua-icon.svg";
-import usrLazio from "../../assets/svg/Accredit-usr-lazio-icon.svg";
-import businet from "../../assets/svg/Accredit-businet-icon.svg";
-import chea from "../../assets/svg/Accredit-chea-icon.svg";
-import xila from "../../assets/svg/Accredit-xila-icon.svg";
-import indian from "../../assets/svg/Accredit-indian-icon.svg";
+import malta from "../../assets/svg/malta.svg"
+import wes from "../../assets/svg/wes.svg"
+import leadership from "../../assets/svg/leadership.svg"
+import dcu from "../../assets/svg/dcu.svg"
+import tqUk from "../../assets/svg/tqUK.svg"
+import acca from "../../assets/svg/acca.svg"
+import othm from "../../assets/svg/othm.svg"
+
 
 function acreditions() {
   return (
@@ -27,32 +27,48 @@ function acreditions() {
           <Marquee speed={200}>
             <div class="accredit-cards">
               <div class="accredit-card">
-                <img src={iao1} alt="" />
+                <img src={malta} alt="" />
               </div>
               <div class="accredit-card">
-                <img src={iao} alt="" />
+                <img src={wes} alt="" />
               </div>
               <div class="accredit-card">
-                <img src={eduqua} alt="" />
+                <img src={leadership} alt="" />
               </div>
               <div class="accredit-card">
-                <img src={usrLazio} alt="" />
+                <img src={dcu} alt="" />
               </div>
               <div class="accredit-card">
-                <img src={businet} alt="" />
+                <img src={tqUk} alt="" />
               </div>
 
               <div class="accredit-card">
-                <img src={chea} alt="" />
+                <img src={acca} alt="" />
               </div>
               <div class="accredit-card">
-                <img src={iao1} alt="" />
+                <img src={othm} alt="" />
               </div>
               <div class="accredit-card">
-                <img src={xila} alt="" />
+                <img src={malta} alt="" />
               </div>
               <div class="accredit-card">
-                <img src={indian} alt="" />
+                <img src={wes} alt="" />
+              </div>
+              <div class="accredit-card">
+                <img src={leadership} alt="" />
+              </div>
+              <div class="accredit-card">
+                <img src={dcu} alt="" />
+              </div>
+              <div class="accredit-card">
+                <img src={tqUk} alt="" />
+              </div>
+
+              <div class="accredit-card">
+                <img src={acca} alt="" />
+              </div>
+              <div class="accredit-card">
+                <img src={othm} alt="" />
               </div>
             </div>
           </Marquee>
@@ -63,44 +79,44 @@ function acreditions() {
           <Marquee>
             <div class="accredit-cards">
               <div class="accredit-card">
-                <img className="accredit-card-img" src={iao1} alt="" />
+                <img className="accredit-card-img" src={malta} alt="" />
               </div>
               <div class="accredit-card">
-                <img className="accredit-card-img" src={iao} alt="" />
+                <img className="accredit-card-img" src={wes} alt="" />
               </div>
               <div class="accredit-card">
-                <img className="accredit-card-img" src={eduqua} alt="" />
+                <img className="accredit-card-img" src={leadership} alt="" />
               </div>
               <div class="accredit-card">
-                <img className="accredit-card-img" src={usrLazio} alt="" />
+                <img className="accredit-card-img" src={dcu} alt="" />
               </div>
               <div class="accredit-card">
-                <img className="accredit-card-img" src={indian} alt="" />
+                <img className="accredit-card-img" src={tqUk} alt="" />
               </div>
               <div class="accredit-card">
-                <img className="accredit-card-img" src={businet} alt="" />
+                <img className="accredit-card-img" src={acca} alt="" />
               </div>
             </div>
           </Marquee>
           <Marquee direction="right">
             <div class="accredit-cards">
               <div class="accredit-card">
-                <img className="accredit-card-img" src={iao1} alt="" />
+                <img className="accredit-card-img" src={dcu} alt="" />
               </div>
               <div class="accredit-card">
-                <img className="accredit-card-img" src={usrLazio} alt="" />
+                <img className="accredit-card-img" src={othm} alt="" />
               </div>
               <div class="accredit-card">
-                <img className="accredit-card-img" src={chea} alt="" />
+                <img className="accredit-card-img" src={malta} alt="" />
               </div>
               <div class="accredit-card">
-                <img className="accredit-card-img" src={xila} alt="" />
+                <img className="accredit-card-img" src={tqUk} alt="" />
               </div>
               <div class="accredit-card">
-                <img className="accredit-card-img" src={businet} alt="" />
+                <img className="accredit-card-img" src={leadership} alt="" />
               </div>
               <div class="accredit-card">
-                <img className="accredit-card-img" src={indian} alt="" />
+                <img className="accredit-card-img" src={wes} alt="" />
               </div>
             </div>
           </Marquee>

@@ -1,6 +1,6 @@
 {
   "name": "cmbs-mba",
-  "homepage": "/cmbs-mba-2",
+  "homepage": "/cmbs-mba",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "aos": "^2.3.4",
+    "axios": "^1.6.8",
     "hamburgers": "^1.2.1",
     "lodash": "^4.17.21",
     "lottie-react": "^2.4.0",
