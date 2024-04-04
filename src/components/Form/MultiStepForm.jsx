@@ -107,12 +107,10 @@ const MultiStepForm = () => {
   const specializationOptions = [
     "MBA in General",
     "MBA in Finance",
-    "MBA in Global Management & Leadership",
-    "MBA in Health Safety & Environment ",
-    "MBA in Healthcare Management ",
-    "MBA in Human Resources ",
-    "MBA in Marketing ",
-    "MBA in Supply Chain Management",
+    "MBA in HR Management",
+    "MBA in Health Management",
+    "MBA in Construction Management ",
+    "MBA in Transport Management",
 
     // Add optins
   ];
