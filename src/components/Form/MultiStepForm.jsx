@@ -131,8 +131,8 @@ const MultiStepForm = () => {
       const response = await fetch(webhookUrl, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
-        },
+          "Content-Type": "multipart/form-data"
+      },
         body: JSON.stringify(dataToSend),
       });
 

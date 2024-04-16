@@ -112,14 +112,13 @@ function popup({ closePopup }) {
 
       try {
         const response = await fetch(
-          // "https://connect.pabbly.com/workflow/sendwebhookdata/IjU3NjUwNTY5MDYzZTA0MzA1MjZmNTUzNTUxMzUi_pc",
-          "https://connect.pabbly.com/workflow/sendwebhookdata/IjU3NjUwNTZiMDYzNTA0MzA1MjZhNTUzNjUxMzUi_pc",
+          "https://connect.pabbly.com/workflow/sendwebhookdata/IjU3NjUwNTY5MDYzZTA0MzA1MjZmNTUzNTUxMzUi_pc",
 
           {
             method: "POST",
             headers: {
-              "Content-Type": "application/json",
-            },
+              "Content-Type": "multipart/form-data"
+          },
             body: JSON.stringify(dataToSend),
           }
         );
