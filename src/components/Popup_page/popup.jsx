@@ -13,7 +13,7 @@ import popImgMob from '../../assets/popup-img-mob.webp'
 
 
 function popup({ closePopup }) {
-  const [formData, setFormData] = useState({ name: "", email: "", phone: "" });
+  const [formData, setFormData] = useState({ name: "", email: "",jobRole:"", phone: "" });
   const [errors, setErrors] = useState({});
   const { togglePopup } = usePopup();
   const [isFormComplete, setIsFormComplete] = useState(false);
@@ -64,6 +64,10 @@ function popup({ closePopup }) {
       formIsValid = false;
       tempErrors["email"] = "Email is not valid";
     }
+    if (!formData.jobRole) {
+      formIsValid = false;
+      tempErrors["jobRole"] = "Job role is required";
+    }
     // Phone validation
     const digits = formData.phone.replace(/\D/g, "");
     if (!formData.phone.trim()) {
@@ -92,12 +96,12 @@ function popup({ closePopup }) {
   useEffect(() => {
     const formComplete =
       formData.name.trim() !== "" &&
-      formData.name.trim().length > 2 &&
+      formData.name.trim().length > 2
+      && formData.jobRole.trim() !== ""&&
       /\S+@\S+\.\S+/.test(formData.email) &&
       /^\d{8,}$/.test(formData.phone.replace(/\D/g, ""));
-    console.log(formData.phone);
     setIsFormComplete(formComplete); // Update isFormComplete state
-  }, [formData.name, formData.email, formData.phone]);
+  }, [formData.name, formData.email, formData.phone, formData.jobRole]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -211,6 +215,17 @@ function popup({ closePopup }) {
                   >
                     {errors.email}
                   </p>
+                )}
+                   <h5>Job Role</h5>
+                <input
+                  type="text"
+                  name="jobRole"
+                  placeholder="Enter your job role"
+                  value={formData.jobRole}
+                  onChange={handleChange}
+                />
+                {errors.jobRole && (
+                  <p className="error">{errors.jobRole}</p>
                 )}
                 <h5>Phone</h5>
                 <PhoneInput
