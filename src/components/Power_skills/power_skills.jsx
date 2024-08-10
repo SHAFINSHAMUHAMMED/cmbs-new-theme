@@ -52,9 +52,7 @@ function power_skills() {
               <h3>MBA General</h3>
             </div>
             <p>
-              A comprehensive program providing a broad understanding of
-              business management, ideal for those seeking versatile roles in
-              business administration and management.
+            Our MBA in Dubai provides the convenience of learning from anywhere, catering to busy professionals seeking broad business acumen.
             </p>
             <a
               target=""
@@ -131,9 +129,7 @@ function power_skills() {
               <h3>MBA in Finance</h3>
             </div>
             <p>
-              For those interested in financial management roles, this program
-              covers financial analysis, investment strategies, and global
-              financial markets.
+            MBA in Finance Program  Ideal for those looking for an Online MBA in UAE specializing in finance.
             </p>
             <a
               target=""
@@ -211,7 +207,7 @@ function power_skills() {
               <h3>MBA in Human Resource Management</h3>
             </div>
             <p>
-              Designed for individuals aiming to lead HR functions, this program
+              Designed for individuals aiming to lead HR functions, this MBA Course
               covers strategic HR management, employee relations, and talent
               management.
             </p>
@@ -290,8 +286,7 @@ function power_skills() {
               <h3>MBA in Health Management</h3>
             </div>
             <p>
-              Tailored for professionals in the healthcare sector, this
-              specialization focuses on healthcare systems management, policy,
+             Our online masters program in healthcare specialization focuses on healthcare systems management, policy,
               and the economics of healthcare.
             </p>
             <a
@@ -453,7 +448,7 @@ function power_skills() {
               <h3>MBA in Transport Management</h3>
             </div>
             <p>
-              Focused on the transport and logistics sector, this program covers
+              Focused on the transport and logistics sector, our MBA degree covers
               supply chain management, transport policy, and logistics strategy.
             </p>
             <a

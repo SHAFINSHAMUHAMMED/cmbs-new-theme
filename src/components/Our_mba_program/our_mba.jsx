@@ -15,7 +15,7 @@ function from_writing() {
           <img className="our-mba-img-1" src={ourMba} alt="" />
 
           <p className="main-p our-mba-p">
-            CMBS offers a range of MBA programs, each focusing on different
+            CMBS offers a range of online and distance MBA programs, each focusing on different
             sectors of the business world. From Educational Leadership to
             Transport Management, our programs are structured to provide an
             in-depth understanding of specific industries, alongside a broad

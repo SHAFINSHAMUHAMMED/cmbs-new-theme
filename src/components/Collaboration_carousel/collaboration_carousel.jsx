@@ -4,7 +4,7 @@ import Marquee from "react-fast-marquee";
 
 import loreal from "../../assets/icon1-loreal.webp";
 import mashreeq from "../../assets/icon2-mashreeq.webp";
-import rakbank from "../../assets/icon3-rakbank.webp";
+// import rakbank from "../../assets/icon3-rakbank.webp";
 import almarai from "../../assets/icon4-almarai.webp";
 import emiratesNBD from "../../assets/icon5-emirates-nbd.webp";
 import standard_chartered from "../../assets/icon6-standard-chartered.webp";
@@ -27,9 +27,9 @@ function collaboration_carousel() {
               <div class="collab-card">
                 <img src={mashreeq} alt="" />
               </div>
-              <div class="collab-card">
+              {/* <div class="collab-card">
                 <img src={rakbank} alt="" />
-              </div>
+              </div> */}
               <div class="collab-card">
                 <img src={almarai} alt="" />
               </div>
@@ -63,9 +63,9 @@ function collaboration_carousel() {
               <div class="collab-card">
                 <img className="collab-card-img" src={mashreeq} alt="" />
               </div>
-              <div class="collab-card">
+              {/* <div class="collab-card">
                 <img className="collab-card-img" src={rakbank} alt="" />
-              </div>
+              </div> */}
               <div class="collab-card">
                 <img className="collab-card-img" src={emiratesNBD} alt="" />
               </div>
