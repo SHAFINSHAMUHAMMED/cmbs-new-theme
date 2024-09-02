@@ -21,7 +21,7 @@ const StepsToUnlockCareer = React.lazy(() => import('./components/Steps_to_unloc
 const StudentSupport = React.lazy(() => import('./components/Student_support_guarantee/student_support'));
 const IcfCertification = React.lazy(() => import('./components/Icf_certification/icf_certification'));
 const Footer = React.lazy(() => import('./components/Footer/footer'));
-const Popup = React.lazy(() => import('./components/Popup_page/popup'));
+const Popup = React.lazy(() => import('./components/Popup_page/popupTwo'));
 const WhatsappStickyLogo = React.lazy(() => import('./components/WhatsappStickyLogo/StickyWhatsAppButton'))
 
 

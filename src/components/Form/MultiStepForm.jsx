@@ -269,6 +269,7 @@ const MultiStepForm = () => {
             <h2>And Phone Number?</h2>
             <PhoneInput
               country={"ae"}
+              excludeCountries={"in,pk"}
               value={formData.whatsapp}
               placeholder={"Type Here..."}
               onKeyDown={handleKeyPress}
