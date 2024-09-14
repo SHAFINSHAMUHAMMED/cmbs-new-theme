@@ -7,6 +7,8 @@ import Lottie from "lottie-react";
 import { ClipLoader } from "react-spinners";
 import arrow from "../../assets/arrow.json";
 import MultiStepProgressBar from "../Progress_bar/MultiStepProgressBar";
+import { parsePhoneNumberFromString } from "libphonenumber-js"; // Import libphonenumber-js
+
 
 const MultiStepForm = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -25,6 +27,13 @@ const MultiStepForm = () => {
 
   const [formErrors, setFormErrors] = useState({});
 
+  const validateWhatsAppNumber = (phone) => {
+    const phoneNumber = parsePhoneNumberFromString(phone, "AE"); // Assume AE (UAE) is default
+    if (!phoneNumber || !phoneNumber.isValid()) {
+      return "Invalid WhatsApp number";
+    }
+    return "";
+  };
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -71,18 +80,12 @@ const MultiStepForm = () => {
           isValid = false;
         }
         break;
-      case 5:
-        const digits = formData.whatsapp.replace(/\D/g, "");
-        if (!formData.whatsapp.trim()) {
-          errors.whatsapp = "WhatsApp number is required";
-          isValid = false;
-        } else if (digits.length > 15) {
-          errors.whatsapp = "Phone number is too long";
-          isValid = false;
-        } else if (digits.length < 8) {
-          errors.whatsapp = "Phone number is too short";
-          isValid = false;
-        }
+        case 5:
+          const phoneError = validateWhatsAppNumber(formData.whatsapp);
+          if (phoneError) {
+            errors.whatsapp = phoneError;
+            isValid = false;
+          }
         break;
       default:
         break;
