@@ -109,12 +109,24 @@ function PopupTwo({ closePopup }) {
     }));
   };
 
+  const getIPAddress = async () => {
+    try {
+      const response = await axios.get('https://api.ipify.org?format=json');
+      return response.data.ip;
+    } catch (error) {
+      console.error("Failed to get IP address:", error);
+      return null;
+    }
+  };
+
   const handleDownload = async (e) => {
     e.preventDefault();
     if (isFormValid()) {
       setIsLoading(true);
 
       try {
+        const ipAddress = await getIPAddress();
+        const dataToSend = { ...formData, ipAddress };
         window.dataLayer = window.dataLayer || [];
         window.dataLayer.push({
           event: "Download Brochure",
@@ -124,9 +136,10 @@ function PopupTwo({ closePopup }) {
             form_id: "Download Brochure Form",
           },
         });
+
         const response = await axios.post(
           "https://connect.pabbly.com/workflow/sendwebhookdata/IjU3NjUwNTY5MDYzZTA0MzA1MjZmNTUzNTUxMzUi_pc",
-          formData,
+          dataToSend,
           {
             headers: {
               "Content-Type": "multipart/form-data",

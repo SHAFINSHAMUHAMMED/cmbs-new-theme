@@ -7,6 +7,7 @@ import Lottie from "lottie-react";
 import { ClipLoader } from "react-spinners";
 import arrow from "../../assets/arrow.json";
 import MultiStepProgressBar from "../Progress_bar/MultiStepProgressBar";
+import axios from "axios";
 import { parsePhoneNumberFromString } from "libphonenumber-js"; // Import libphonenumber-js
 
 
@@ -118,14 +119,26 @@ const MultiStepForm = () => {
     // Add optins
   ];
 
+  const getIPAddress = async () => {
+    try {
+      const response = await axios.get('https://api.ipify.org?format=json');
+      return response.data.ip;
+    } catch (error) {
+      console.error("Failed to get IP address:", error);
+      return null;
+    }
+  };
+
   const handleSubmit = async () => {
     setIsLoading(true);
+    const ipAddress = await getIPAddress();
 
     const dataToSend = {
       ...formData,
-      currentUrl: currentUrl
+      currentUrl: currentUrl,
+      ipAddress
     };
-
+return console.log(dataToSend)
     // Webhook URL
     const webhookUrl =
       "https://connect.pabbly.com/workflow/sendwebhookdata/IjU3NjUwNTY5MDYzZTA0MzA1MjZmNTUzNTUxMzAi_pc";
