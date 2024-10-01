@@ -24,17 +24,18 @@ const MultiStepForm = () => {
     // location: "",
     email: "",
     whatsapp: "",
+    countryCode: "AE"
+
   });
 
   const [formErrors, setFormErrors] = useState({});
 
-  const validateWhatsAppNumber = (phone) => {
-    const phoneNumber = parsePhoneNumberFromString(phone, "AE"); // Assume AE (UAE) is default
-    if (!phoneNumber || !phoneNumber.isValid()) {
-      return "Invalid WhatsApp number";
-    }
-    return "";
+  const validateWhatsAppNumber = (phone, countryCode) => {
+    const phoneNumber = parsePhoneNumberFromString(phone, countryCode);
+    console.log(countryCode)
+    return phoneNumber && phoneNumber.isValid();
   };
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -81,12 +82,11 @@ const MultiStepForm = () => {
           isValid = false;
         }
         break;
-        case 5:
-          const phoneError = validateWhatsAppNumber(formData.whatsapp);
-          if (phoneError) {
-            errors.whatsapp = phoneError;
-            isValid = false;
-          }
+         case 5:
+        if (!validateWhatsAppNumber(formData.whatsapp, formData.countryCode)) {
+          errors.whatsapp = "Invalid WhatsApp number";
+          isValid = false;
+        }
         break;
       default:
         break;
@@ -138,7 +138,7 @@ const MultiStepForm = () => {
       currentUrl: currentUrl,
       ipAddress
     };
-return console.log(dataToSend)
+
     // Webhook URL
     const webhookUrl =
       "https://connect.pabbly.com/workflow/sendwebhookdata/IjU3NjUwNTY5MDYzZTA0MzA1MjZmNTUzNTUxMzAi_pc";
@@ -284,13 +284,13 @@ return console.log(dataToSend)
           <>
             <h2>And Phone Number?</h2>
             <PhoneInput
-              country={"ae"}
+              country={formData.countryCode.toLowerCase()}
               excludeCountries={"in,pk"}
               value={formData.whatsapp}
               placeholder={"Type Here..."}
               onKeyDown={handleKeyPress}
-              onChange={(phone) =>
-                setFormData({ ...formData, whatsapp: phone })
+              onChange={(phone, country) =>
+                setFormData({ ...formData, whatsapp: phone, countryCode: country.countryCode.toUpperCase() })
               }
             />
             {renderError("whatsapp")}
