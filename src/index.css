@@ -382,7 +382,9 @@ button {
     opacity: 0;
   }
 }
-
+.grecaptcha-badge {
+  z-index: 9999;
+}
 /* //tablet */
 
 @media only screen and (max-width: 1180px) {
