@@ -192,7 +192,6 @@ const MultiStepForm = () => {
     if (!otpData || Date.now() > otpData.expiry) {
       return false; // OTP expired
     }
-    console.log(otpData.otp + "otp")
     return otpData.otp == enteredOtp;
   };
 
@@ -217,7 +216,7 @@ const MultiStepForm = () => {
       };
 
       const webhookResponse = await axios.post(
-        "https://connect.pabbly.com/workflow/sendwebhookdata/IjU3NjUwNTZiMDYzNTA0MzA1MjZhNTUzNjUxMzUi_pc",
+        "https://connect.pabbly.com/workflow/sendwebhookdata/IjU3NjYwNTZmMDYzMDA0MzQ1MjZkNTUzMzUxM2Ei_pc",
         dataToSend,
         {
           headers: {
@@ -226,7 +225,6 @@ const MultiStepForm = () => {
         }
       );
       if (webhookResponse.status === 200) {
-        console.log("Form data sent successfully");
         window.location.href = "https://offer.learnersuae.com/confirmation/";
       } else {
         console.error("Failed to send form data");
@@ -237,8 +235,6 @@ const MultiStepForm = () => {
       setIsLoading(false);
     }
   };
-
-  console.log(isLoading+"loading")
 
   const renderError = (fieldName) => {
     if (formErrors[fieldName]) {

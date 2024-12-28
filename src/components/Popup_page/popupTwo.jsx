@@ -164,17 +164,16 @@ function PopupTwo({ closePopup }) {
   }
 
   const handleOtpSubmit = async () => {
-    console.log("subOtp")
     const storedOtp = getStoredOtp();
     if (otp == storedOtp) {
       setIsLoading(true);
       try {
         const ipAddress = await getIPAddress();
-        const dataToSend = { ...formData, ipAddress, otpVerified: true };
+        const verifiedData = { ...formData, ipAddress, otpVerified: true };
 
         await axios.post(
           "https://connect.pabbly.com/workflow/sendwebhookdata/IjU3NjYwNTZmMDYzMDA0MzQ1MjZkNTUzMzUxM2Ei_pc",
-          dataToSend,
+          verifiedData,
           {
             headers: {
               "Content-Type": "multipart/form-data",
@@ -194,12 +193,9 @@ function PopupTwo({ closePopup }) {
   };
 
   const handleDownload = async (e) => {
-    console.log("download")
     e.preventDefault();
     if (isFormValid()) {
       setIsLoading(true);
-      console.log("true")
-
       try {
         const token = await executeRecaptcha("submit");
         if (!token) {
