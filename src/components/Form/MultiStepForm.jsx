@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import "../Icf_certification/icf.css";
 import Claim_description from "../Description/claim_description";
 import "react-phone-input-2/lib/style.css";
@@ -18,7 +18,8 @@ const MultiStepForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [currentUrl, setCurrentUrl] = useState('');
   const { executeRecaptcha } = useGoogleReCaptcha();
-
+  const [otpStep, setOtpStep] = useState(false); // State to handle OTP input step
+  const [otp, setOtp] = useState("");
   const [formData, setFormData] = useState({
     name: "",
     specialization: "",
@@ -34,7 +35,6 @@ const MultiStepForm = () => {
 
   const validateWhatsAppNumber = (phone, countryCode) => {
     const phoneNumber = parsePhoneNumberFromString(phone, countryCode);
-    console.log(countryCode)
     return phoneNumber && phoneNumber.isValid();
   };
 
@@ -84,7 +84,7 @@ const MultiStepForm = () => {
           isValid = false;
         }
         break;
-         case 5:
+      case 5:
         if (!validateWhatsAppNumber(formData.whatsapp, formData.countryCode)) {
           errors.whatsapp = "Invalid WhatsApp number";
           isValid = false;
@@ -103,11 +103,49 @@ const MultiStepForm = () => {
       if (currentStep < 5) {
         setCurrentStep(currentStep + 1);
         setShowAnimation(currentStep + 1 < 5);
-        // console.log(currentStep);
       } else {
-        setShowAnimation(false);
-        handleSubmit();
+        sendOtp(); // Send OTP when final step is completed
       }
+    }
+  };
+
+  const sendOtp = async () => {
+    setIsLoading(true);
+    try {
+      const token = await executeRecaptcha("submit");
+      if (!token) {
+        alert("Please complete the reCAPTCHA.");
+        setIsLoading(false);
+        return;
+      }
+      const response = await axios.post(
+        "https://googlerecaptchaserver.onrender.com/verify-recaptcha",
+        { token }
+      );
+
+      if (response.data.success) {
+        const otpResponse = await axios.post("http://localhost:5000/send-otp", {
+          phone: formData.whatsapp,
+          name: formData.name,
+          heading: "OTP Verification",
+        });
+
+        const otp = otpResponse.data.otp;
+        // Store OTP in localStorage with expiry
+        const expiryTime = Date.now() + 10 * 60 * 1000; // 10 minutes
+        localStorage.setItem(
+          "otp_data",
+          JSON.stringify({ otp, expiry: expiryTime })
+        );
+
+        setOtpStep(true); // Show OTP input page
+        setIsLoading(false);
+      } else {
+        alert("reCAPTCHA verification failed. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error sending OTP:", error);
+      setIsLoading(false);
     }
   };
   const specializationOptions = [
@@ -136,60 +174,63 @@ const MultiStepForm = () => {
     return;
   }
 
-  const handleSubmit = async () => {
-    setIsLoading(true);
-    
-    try {
-      const token = await executeRecaptcha("submit");
 
-      if (!token) {
-        alert("Please complete the reCAPTCHA.");
-        setIsLoading(false);
-        return;
-      }
+  const verifyOtp = (enteredOtp) => {
+    const otpData = JSON.parse(localStorage.getItem("otp_data"));
+    if (!otpData || Date.now() > otpData.expiry) {
+      return false; // OTP expired
+    }
+    console.log(otpData.otp + "otp")
+    return otpData.otp == enteredOtp;
+  };
+
+  const handleOtpSubmit = async () => {
+    if (verifyOtp(otp)) {
+      handleSubmit(true); // Pass verified: true
+    } else {
+      alert("Invalid OTP or OTP has expired. Please request a new one.");
+    }
+  };
+
+  const handleSubmit = async (verified = false) => {
+
+    console.log("hey")
+    setIsLoading(true);
+
+    try {
+      console.log("try")
       const response = await axios.post(
         "https://googlerecaptchaserver.onrender.com/verify-recaptcha",
-        {
-          token,
-        }
+        { token }
       );
+
       if (response.data.success) {
-      const ipAddress = await getIPAddress();
-      // Send the token to the server for verification
-    
-    const dataToSend = {
-      ...formData,
-      currentUrl: currentUrl,
-      ipAddress
-    };
+        const ipAddress = await axios.get("https://api.ipify.org?format=json");
+        const dataToSend = {
+          ...formData,
+          currentUrl: currentUrl,
+          ipAddress: ipAddress.data.ip,
+          verified,
+        };
 
-    // Webhook URL
-    const webhookUrl =
-      "https://connect.pabbly.com/workflow/sendwebhookdata/IjU3NjUwNTY5MDYzZTA0MzA1MjZmNTUzNTUxMzAi_pc";
+        const webhookUrl =
+          "https://connect.pabbly.com/workflow/sendwebhookdata/IjU3NjUwNTZiMDYzNTA0MzA1MjZhNTUzNjUxMzUi_pc";
 
-      const webhookResponse = await fetch(webhookUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "multipart/form-data"
-      },
-        body: JSON.stringify(dataToSend),
-      });
+        const webhookResponse = await axios.post(webhookUrl, dataToSend);
 
-      if (webhookResponse.ok) {
-        // Handle success
-        console.log("Form data sent successfully");
-        window.location.href = "https://offer.learnersuae.com/confirmation/";
+        if (webhookResponse.status === 200) {
+          console.log("Form data sent successfully");
+          window.location.href = "https://offer.learnersuae.com/confirmation/";
+        } else {
+          console.error("Failed to send form data");
+        }
       } else {
-        console.error("Failed to send form data");
-        // Handle error
+        alert("reCAPTCHA verification failed. Please try again.");
       }
-    } else {
-      alert("reCAPTCHA verification failed. Please try again.");
-      setIsLoading(false);
-    }
     } catch (error) {
       console.error("Error sending form data:", error);
-      // Handle network error
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -201,15 +242,24 @@ const MultiStepForm = () => {
   };
 
   const renderForm = () => {
-    const handleKeyPress = (e) => {
-      if (e.key === "Enter") {
-        if (currentStep < 5) {
-          nextStep();
-        } else {
-          handleSubmit();
-        }
-      }
-    };
+    if (otpStep) {
+      return (
+        <>
+          <h2>Enter the OTP sent to your phone</h2>
+          <input
+            type="text"
+            value={otp}
+            onChange={(e) => setOtp(e.target.value)}
+            placeholder="Enter OTP"
+          />
+          <button type="button" onClick={handleOtpSubmit}>
+            {isLoading ? (
+              <ClipLoader color={"#ffffff"} size={20} />
+            ) : "Verify OTP"}
+          </button>
+        </>
+      );
+    }
     switch (currentStep) {
       case 1:
         return (
@@ -224,7 +274,6 @@ const MultiStepForm = () => {
               value={formData.name}
               onChange={handleChange}
               placeholder="Type Here..."
-              onKeyUp={handleKeyPress}
             />
             {renderError("name")}
           </>
@@ -237,7 +286,7 @@ const MultiStepForm = () => {
               interest?
             </h2>
             <p>We want to make sure your journey is tailored just for you.</p>
-            <div class="custom-select">
+            <div className="custom-select">
               <select
                 name="specialization"
                 value={formData.specialization}
@@ -266,7 +315,6 @@ const MultiStepForm = () => {
               value={formData.jobRole}
               onChange={handleChange}
               placeholder="Type Here..."
-              onKeyUp={handleKeyPress}
             />
             {renderError("jobRole")}
           </>
@@ -301,7 +349,6 @@ const MultiStepForm = () => {
               value={formData.email}
               onChange={handleChange}
               placeholder="Type Here..."
-              onKeyUp={handleKeyPress}
             />
             {renderError("email")}
           </>
@@ -312,10 +359,9 @@ const MultiStepForm = () => {
             <h2>And Phone Number?</h2>
             <PhoneInput
               country={formData.countryCode.toLowerCase()}
-              excludeCountries={"in,pk"}
+              // excludeCountries={"in,pk"}
               value={formData.whatsapp}
               placeholder={"Type Here..."}
-              onKeyDown={handleKeyPress}
               onChange={(phone, country) =>
                 setFormData({ ...formData, whatsapp: phone, countryCode: country.countryCode.toUpperCase() })
               }
@@ -334,24 +380,19 @@ const MultiStepForm = () => {
       <MultiStepProgressBar currentStep={currentStep} />
       <form className="icf-form" onSubmit={(e) => e.preventDefault()}>
         {renderForm()}
-        <div className="button-wrapper">
-          <button type="button" onClick={nextStep}>
-            {currentStep < 5 && "CONTINUE"}
-            {currentStep === 5 &&
-              !isLoading &&
-              "Claim Your Free Consultation Now"}
-            {currentStep < 5 && showAnimation && (
-              <Lottie
-                animationData={arrow}
-                loop={true}
-                className="icf-button-lottie"
-              />
-            )}
-            {currentStep === 5 && isLoading && (
-              <ClipLoader color={"#ffffff"} size={20} />
-            )}
-          </button>
-        </div>
+        {!otpStep && (
+          <div className="button-wrapper">
+            <button type="button" onClick={nextStep}>
+              {currentStep < 5 && "CONTINUE"}
+              {currentStep === 5 &&
+                !isLoading &&
+                "Claim Your Free Consultation Now"}
+              {currentStep === 5 && isLoading && (
+                <ClipLoader color={"#ffffff"} size={20} />
+              )}
+            </button>
+          </div>
+        )}
       </form>
       <div className="form-svg-bg">
         <svg

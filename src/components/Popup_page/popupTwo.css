@@ -364,7 +364,36 @@
     pointer-events: none;
 }
 
-
+.otp-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  .otp-container h1 {
+    color: white;
+    font-size: 24px;
+  }
+  
+  .otp-container input {
+    width: 300px;
+    height: 60px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    padding: 5px;
+    font-size: 18px;
+    text-align: center;
+    margin-top: 10px;
+    outline: none;
+  }
+  
+  .otp-container button {
+    background-color: #259d4a;
+    max-width: 350px;
+    cursor: pointer;
+  }
+  
 
 @media only screen and (max-width: 1180px) {
     .popup2-main {
@@ -629,4 +658,9 @@
     .motivations-option p {
         font-size: 12px;
     }
+    .otp-container input {
+        width: 200px;
+        height: 40px;
+      }
+      
 }

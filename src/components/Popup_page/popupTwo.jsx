@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import MultiStepProgressBarTwo from "../Progress_bar/MultiStepProgressBarTwo";
 import "react-phone-input-2/lib/style.css";
 import PhoneInput from "react-phone-input-2";
@@ -18,13 +18,16 @@ function PopupTwo({ closePopup }) {
     email: "",
     jobRole: "",
     phone: "",
-    countryCode: "AE", // Default to UAE
+    countryCode: "AE",
     currentUrl: window.location.href,
     preferredMode: "",
     motivations: [],
   });
   const [isActive, setIsActive] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [showOtpInput, setShowOtpInput] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [otpError, setOtpError] = useState("");
 
   const { togglePopup } = usePopup();
   const { executeRecaptcha } = useGoogleReCaptcha();
@@ -35,6 +38,30 @@ function PopupTwo({ closePopup }) {
     }, 100);
     return () => clearTimeout(timeout);
   }, []);
+
+  const storeOtpWithExpiry = (otp) => {
+    const now = new Date();
+    const item = {
+      value: otp,
+      expiry: now.getTime() + 10 * 60 * 1000, // 10 minutes from now
+    };
+    localStorage.setItem("storedOtp", JSON.stringify(item));
+  };
+  const itemStr = localStorage.getItem("storedOtp");
+  const getStoredOtp = () => {
+    const itemStr = localStorage.getItem("storedOtp");
+    if (!itemStr) return null;
+
+    const item = JSON.parse(itemStr);
+    const now = new Date();
+
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem("storedOtp");
+      return null;
+    }
+    return item.value;
+  };
+
 
   // Validate phone number using libphonenumber-js
   const validatePhone = (phone, countryCode) => {
@@ -136,43 +163,17 @@ function PopupTwo({ closePopup }) {
     return;
   }
 
-  const handleDownload = async (e) => {
-    e.preventDefault();
-    if (isFormValid()) {
+  const handleOtpSubmit = async () => {
+    console.log("subOtp")
+    const storedOtp = getStoredOtp();
+    if (otp == storedOtp) {
       setIsLoading(true);
-
       try {
-        const token = await executeRecaptcha("submit");
-
-        if (!token) {
-          alert("Please complete the reCAPTCHA.");
-          setIsLoading(false);
-          return;
-        }
-
-        // Send the token to the server for verification
-        const response = await axios.post(
-          "https://googlerecaptchaserver.onrender.com/verify-recaptcha",
-          {
-            token,
-          }
-        );
-        if (response.data.success) {
-
         const ipAddress = await getIPAddress();
-        const dataToSend = { ...formData, ipAddress };
-        window.dataLayer = window.dataLayer || [];
-        window.dataLayer.push({
-          event: "Download Brochure",
-          form_id: "Download Brochure Form",
-          email: formData.email,
-          eventModel: {
-            form_id: "Download Brochure Form",
-          },
-        });
+        const dataToSend = { ...formData, ipAddress, otpVerified: true };
 
-        const webhookResponse = await axios.post(
-          "https://connect.pabbly.com/workflow/sendwebhookdata/IjU3NjUwNTY5MDYzZTA0MzA1MjZmNTUzNTUxMzUi_pc",
+        await axios.post(
+          "https://connect.pabbly.com/workflow/sendwebhookdata/IjU3NjYwNTZmMDYzMDA0MzQ1MjZkNTUzMzUxM2Ei_pc",
           dataToSend,
           {
             headers: {
@@ -181,19 +182,74 @@ function PopupTwo({ closePopup }) {
           }
         );
 
-        setIsLoading(false);
-        window.location.href =
-          "https://offer.learnersuae.com/brochure-thank-you/";
-        } else {
-          alert("reCAPTCHA verification failed. Please try again.");
-          setIsLoading(false);
-        }
+        window.location.href = "https://offer.learnersuae.com/brochure-thank-you/";
       } catch (error) {
-        console.error("Error posting form data:", error);
-        setIsLoading(false);
+        console.error("Error submitting verified data:", error);
+        setOtpError("Failed to process verification. Please try again.");
       }
+      setIsLoading(false);
+    } else {
+      setOtpError("Invalid OTP. Please try again.");
     }
   };
+
+  const handleDownload = async (e) => {
+    console.log("download")
+    e.preventDefault();
+    if (isFormValid()) {
+      setIsLoading(true);
+      console.log("true")
+
+      try {
+        const token = await executeRecaptcha("submit");
+        if (!token) {
+          alert("Please complete the reCAPTCHA.");
+          setIsLoading(false);
+          return;
+        }
+
+        const response = await axios.post(
+          "https://googlerecaptchaserver.onrender.com/verify-recaptcha",
+          { token }
+        );
+
+        if (response.data.success) {
+          // Send OTP
+          const otpResponse = await axios.post("http://localhost:5000/send-otp", {
+            phone: formData.phone,
+            heading: "Learners University college",
+            name: formData.name
+          });
+
+          // Store OTP with expiry
+          storeOtpWithExpiry(otpResponse.data.otp);
+
+          // Send initial data to Pabbly with verified: false
+          const ipAddress = await getIPAddress();
+          const dataToSend = { ...formData, ipAddress, otpVerified: false };
+
+          await axios.post(
+            "https://connect.pabbly.com/workflow/sendwebhookdata/IjU3NjUwNTY5MDYzZTA0MzA1MjZmNTUzNTUxMzUi_pc",
+            dataToSend,
+            {
+              headers: {
+                "Content-Type": "multipart/form-data",
+              },
+            }
+          );
+
+          setShowOtpInput(true);
+        } else {
+          alert("reCAPTCHA verification failed. Please try again.");
+        }
+      } catch (error) {
+        console.error("Error processing request:", error);
+        alert("An error occurred. Please try again.");
+      }
+      setIsLoading(false);
+    }
+  };
+
 
   return (
     <CSSTransition
@@ -209,7 +265,10 @@ function PopupTwo({ closePopup }) {
       <div className="popup2-main">
         <svg
           className="popup2-close-button cursor-pointer"
-          onClick={handleExit}
+          onClick={() => {
+            setIsActive(false);
+            setTimeout(closePopup, 300);
+          }}
           xmlns="http://www.w3.org/2000/svg"
           width="27"
           height="28"
@@ -223,463 +282,484 @@ function PopupTwo({ closePopup }) {
           />
         </svg>
         <div className="popup2-sub">
-          <h1 className="popup2-main-h1">
-            Get Instant Access To The CMBS MBA Brochure
-          </h1>
-          <p className="popup2-main-description">
-            Get an inside look at our prestigious programs, faculty, and the
-            unique benefits that set us apart in the business education
-            landscape.
-          </p>
-          <MultiStepProgressBarTwo currentStep={currentStep} />
+          {!showOtpInput ? (
+            <>
+              <h1 className="popup2-main-h1">
+                Get Instant Access To The CMBS MBA Brochure
+              </h1>
+              <p className="popup2-main-description">
+                Get an inside look at our prestigious programs, faculty, and the
+                unique benefits that set us apart in the business education
+                landscape.
+              </p>
+              <MultiStepProgressBarTwo currentStep={currentStep} />
 
-          {currentStep === 1 && (
-            <div className="form-row">
-              <label htmlFor="Name">Name</label>
-              <input
-                type="text"
-                name="name"
-                placeholder="Name"
-                value={formData.name}
-                onChange={handleChange}
-              />
-              <label htmlFor="Name">Email</label>
-              <input
-                type="email"
-                name="email"
-                placeholder="Email"
-                value={formData.email}
-                onChange={handleChange}
-              />
-            </div>
-          )}
-
-          {currentStep === 2 && (
-            <div className="form-row">
-              <label htmlFor="Phone">Phone</label>
-              <PhoneInput
-                country={formData.countryCode.toLowerCase()}
-                value={formData.phone}
-                placeholder="Enter your Phone Number"
-                excludeCountries={["in", "pk"]}
-                onChange={(value, country) =>
-                  setFormData({
-                    ...formData,
-                    phone: value,
-                    countryCode: country.countryCode.toUpperCase(),
-                  })
-                }
-              />
-              <label htmlFor="JobRole">Job Role</label>
-              <input
-                type="text"
-                name="jobRole"
-                placeholder="Job Role"
-                value={formData.jobRole}
-                onChange={handleChange}
-              />
-            </div>
-          )}
-
-          {currentStep === 3 && (
-            <div className="preferred-mode-container">
-              <h4>Preferred Mode Of Study</h4>
-              <div className="preferred-mode-group">
-                <label
-                  className={`preferred-mode ${
-                    formData.preferredMode === "Online" ? "selected" : ""
-                  }`}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="30"
-                    height="30"
-                    viewBox="0 0 30 30"
-                    fill="none"
-                  >
-                    <circle cx="15" cy="15" r="15" fill="#EDE6D8" />
-                    {formData.preferredMode === "Online" && (
-                      <path
-                        d="M8 14.9565L12.5435 19.5L22.0435 10"
-                        stroke="#259D4A"
-                        strokeWidth="3.30435"
-                      />
-                    )}
-                  </svg>
+              {currentStep === 1 && (
+                <div className="form-row">
+                  <label htmlFor="Name">Name</label>
                   <input
-                    type="radio"
-                    name="preferredMode"
-                    value="Online"
-                    checked={formData.preferredMode === "Online"}
+                    type="text"
+                    name="name"
+                    placeholder="Name"
+                    value={formData.name}
                     onChange={handleChange}
                   />
-                  <p>Online</p>
-                </label>
-
-                <label
-                  className={`preferred-mode ${
-                    formData.preferredMode === "Blended" ? "selected" : ""
-                  }`}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="30"
-                    height="30"
-                    viewBox="0 0 30 30"
-                    fill="none"
-                  >
-                    <circle cx="15" cy="15" r="15" fill="#EDE6D8" />
-                    {formData.preferredMode === "Blended" && (
-                      <path
-                        d="M8 14.9565L12.5435 19.5L22.0435 10"
-                        stroke="#259D4A"
-                        strokeWidth="3.30435"
-                      />
-                    )}
-                  </svg>
+                  <label htmlFor="Name">Email</label>
                   <input
-                    type="radio"
-                    name="preferredMode"
-                    value="Blended"
-                    checked={formData.preferredMode === "Blended"}
+                    type="email"
+                    name="email"
+                    placeholder="Email"
+                    value={formData.email}
                     onChange={handleChange}
                   />
-                  <p>Blended</p>
-                </label>
+                </div>
+              )}
+
+              {currentStep === 2 && (
+                <div className="form-row">
+                  <label htmlFor="Phone">Phone</label>
+                  <PhoneInput
+                    country={formData.countryCode.toLowerCase()}
+                    value={formData.phone}
+                    placeholder="Enter your Phone Number"
+                    // excludeCountries={["in", "pk"]}
+                    onChange={(value, country) =>
+                      setFormData({
+                        ...formData,
+                        phone: value,
+                        countryCode: country.countryCode.toUpperCase(),
+                      })
+                    }
+                  />
+                  <label htmlFor="JobRole">Job Role</label>
+                  <input
+                    type="text"
+                    name="jobRole"
+                    placeholder="Job Role"
+                    value={formData.jobRole}
+                    onChange={handleChange}
+                  />
+                </div>
+              )}
+
+              {currentStep === 3 && (
+                <div className="preferred-mode-container">
+                  <h4>Preferred Mode Of Study</h4>
+                  <div className="preferred-mode-group">
+                    <label
+                      className={`preferred-mode ${formData.preferredMode === "Online" ? "selected" : ""
+                        }`}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="30"
+                        height="30"
+                        viewBox="0 0 30 30"
+                        fill="none"
+                      >
+                        <circle cx="15" cy="15" r="15" fill="#EDE6D8" />
+                        {formData.preferredMode === "Online" && (
+                          <path
+                            d="M8 14.9565L12.5435 19.5L22.0435 10"
+                            stroke="#259D4A"
+                            strokeWidth="3.30435"
+                          />
+                        )}
+                      </svg>
+                      <input
+                        type="radio"
+                        name="preferredMode"
+                        value="Online"
+                        checked={formData.preferredMode === "Online"}
+                        onChange={handleChange}
+                      />
+                      <p>Online</p>
+                    </label>
+
+                    <label
+                      className={`preferred-mode ${formData.preferredMode === "Blended" ? "selected" : ""
+                        }`}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="30"
+                        height="30"
+                        viewBox="0 0 30 30"
+                        fill="none"
+                      >
+                        <circle cx="15" cy="15" r="15" fill="#EDE6D8" />
+                        {formData.preferredMode === "Blended" && (
+                          <path
+                            d="M8 14.9565L12.5435 19.5L22.0435 10"
+                            stroke="#259D4A"
+                            strokeWidth="3.30435"
+                          />
+                        )}
+                      </svg>
+                      <input
+                        type="radio"
+                        name="preferredMode"
+                        value="Blended"
+                        checked={formData.preferredMode === "Blended"}
+                        onChange={handleChange}
+                      />
+                      <p>Blended</p>
+                    </label>
+                  </div>
+                </div>
+              )}
+
+              {currentStep === 4 && (
+                <div className="motivations-container">
+                  <h4>What is your biggest Motivation to enroll in mba</h4>
+                  <div className="motivations-group">
+                    <label
+                      className={`motivations-option ${formData.motivations.includes("To Get Higher-Paying Job")
+                        ? "selected"
+                        : ""
+                        }`}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="30"
+                        height="30"
+                        viewBox="0 0 30 30"
+                        fill="none"
+                      >
+                        <circle cx="15" cy="15" r="15" fill="#EDE6D8" />
+                        {formData.motivations.includes(
+                          "To Get Higher-Paying Job"
+                        ) && (
+                            <path
+                              d="M8 14.9565L12.5435 19.5L22.0435 10"
+                              stroke="#259D4A"
+                              strokeWidth="3.30435"
+                            />
+                          )}
+                      </svg>
+                      <input
+                        type="checkbox"
+                        name="motivations"
+                        value="To Get Higher-Paying Job"
+                        checked={formData.motivations.includes(
+                          "To Get Higher-Paying Job"
+                        )}
+                        onChange={handleCheckboxChange}
+                      />
+                      <p>To Get Higher-Paying Job</p>
+                    </label>
+
+                    <label
+                      className={`motivations-option ${formData.motivations.includes("Increased Job Security")
+                        ? "selected"
+                        : ""
+                        }`}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="30"
+                        height="30"
+                        viewBox="0 0 30 30"
+                        fill="none"
+                      >
+                        <circle cx="15" cy="15" r="15" fill="#EDE6D8" />
+                        {formData.motivations.includes(
+                          "Increased Job Security"
+                        ) && (
+                            <path
+                              d="M8 14.9565L12.5435 19.5L22.0435 10"
+                              stroke="#259D4A"
+                              strokeWidth="3.30435"
+                            />
+                          )}
+                      </svg>
+                      <input
+                        type="checkbox"
+                        name="motivations"
+                        value="Increased Job Security"
+                        checked={formData.motivations.includes(
+                          "Increased Job Security"
+                        )}
+                        onChange={handleCheckboxChange}
+                      />
+                      <p>Increased Job Security</p>
+                    </label>
+
+                    <label
+                      className={`motivations-option ${formData.motivations.includes("Move to Another Industry")
+                        ? "selected"
+                        : ""
+                        }`}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="30"
+                        height="30"
+                        viewBox="0 0 30 30"
+                        fill="none"
+                      >
+                        <circle cx="15" cy="15" r="15" fill="#EDE6D8" />
+                        {formData.motivations.includes(
+                          "Move to Another Industry"
+                        ) && (
+                            <path
+                              d="M8 14.9565L12.5435 19.5L22.0435 10"
+                              stroke="#259D4A"
+                              strokeWidth="3.30435"
+                            />
+                          )}
+                      </svg>
+                      <input
+                        type="checkbox"
+                        name="motivations"
+                        value="Move to Another Industry"
+                        checked={formData.motivations.includes(
+                          "Move to Another Industry"
+                        )}
+                        onChange={handleCheckboxChange}
+                      />
+                      <p>Move to Another Industry</p>
+                    </label>
+
+                    <label
+                      className={`motivations-option ${formData.motivations.includes("Start own business")
+                        ? "selected"
+                        : ""
+                        }`}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="30"
+                        height="30"
+                        viewBox="0 0 30 30"
+                        fill="none"
+                      >
+                        <circle cx="15" cy="15" r="15" fill="#EDE6D8" />
+                        {formData.motivations.includes("Start own business") && (
+                          <path
+                            d="M8 14.9565L12.5435 19.5L22.0435 10"
+                            stroke="#259D4A"
+                            strokeWidth="3.30435"
+                          />
+                        )}
+                      </svg>
+                      <input
+                        type="checkbox"
+                        name="motivations"
+                        value="Start own business"
+                        checked={formData.motivations.includes(
+                          "Start own business"
+                        )}
+                        onChange={handleCheckboxChange}
+                      />
+                      <p>Start own business</p>
+                    </label>
+
+                    <label
+                      className={`motivations-option ${formData.motivations.includes("Promotion in Same Company")
+                        ? "selected"
+                        : ""
+                        }`}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="30"
+                        height="30"
+                        viewBox="0 0 30 30"
+                        fill="none"
+                      >
+                        <circle cx="15" cy="15" r="15" fill="#EDE6D8" />
+                        {formData.motivations.includes(
+                          "Promotion in Same Company"
+                        ) && (
+                            <path
+                              d="M8 14.9565L12.5435 19.5L22.0435 10"
+                              stroke="#259D4A"
+                              strokeWidth="3.30435"
+                            />
+                          )}
+                      </svg>
+                      <input
+                        type="checkbox"
+                        name="motivations"
+                        value="Promotion in Same Company"
+                        checked={formData.motivations.includes(
+                          "Promotion in Same Company"
+                        )}
+                        onChange={handleCheckboxChange}
+                      />
+                      <p>Promotion in Same Company</p>
+                    </label>
+
+                    <label
+                      className={`motivations-option ${formData.motivations.includes("Migration") ? "selected" : ""
+                        }`}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="30"
+                        height="30"
+                        viewBox="0 0 30 30"
+                        fill="none"
+                      >
+                        <circle cx="15" cy="15" r="15" fill="#EDE6D8" />
+                        {formData.motivations.includes("Migration") && (
+                          <path
+                            d="M8 14.9565L12.5435 19.5L22.0435 10"
+                            stroke="#259D4A"
+                            strokeWidth="3.30435"
+                          />
+                        )}
+                      </svg>
+                      <input
+                        type="checkbox"
+                        name="motivations"
+                        value="Migration"
+                        checked={formData.motivations.includes("Migration")}
+                        onChange={handleCheckboxChange}
+                      />
+                      <p>Migration</p>
+                    </label>
+
+                    <label
+                      className={`motivations-option ${formData.motivations.includes(
+                        "Expand My Skills & Knowledge"
+                      )
+                        ? "selected"
+                        : ""
+                        }`}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="30"
+                        height="30"
+                        viewBox="0 0 30 30"
+                        fill="none"
+                      >
+                        <circle cx="15" cy="15" r="15" fill="#EDE6D8" />
+                        {formData.motivations.includes(
+                          "Expand My Skills & Knowledge"
+                        ) && (
+                            <path
+                              d="M8 14.9565L12.5435 19.5L22.0435 10"
+                              stroke="#259D4A"
+                              strokeWidth="3.30435"
+                            />
+                          )}
+                      </svg>
+                      <input
+                        type="checkbox"
+                        name="motivations"
+                        value="Expand My Skills & Knowledge"
+                        checked={formData.motivations.includes(
+                          "Expand My Skills & Knowledge"
+                        )}
+                        onChange={handleCheckboxChange}
+                      />
+                      <p>Expand My Skills & Knowledge</p>
+                    </label>
+
+                    <label
+                      className={`motivations-option ${formData.motivations.includes("Other") ? "selected" : ""
+                        }`}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="30"
+                        height="30"
+                        viewBox="0 0 30 30"
+                        fill="none"
+                      >
+                        <circle cx="15" cy="15" r="15" fill="#EDE6D8" />
+                        {formData.motivations.includes("Other") && (
+                          <path
+                            d="M8 14.9565L12.5435 19.5L22.0435 10"
+                            stroke="#259D4A"
+                            strokeWidth="3.30435"
+                          />
+                        )}
+                      </svg>
+                      <input
+                        type="checkbox"
+                        name="motivations"
+                        value="Other"
+                        checked={formData.motivations.includes("Other")}
+                        onChange={handleCheckboxChange}
+                      />
+                      <p>Other</p>
+                    </label>
+                  </div>
+                </div>
+              )}
+
+              <div className="btn2">
+                {currentStep < 4 ? (
+                  <div
+                    onClick={isStepValid() ? handleNext : null}
+                    className={`cont-button ${!isStepValid() ? "disabled" : ""}`}
+                  >
+                    <button disabled={!isStepValid()}>Continue</button>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="45"
+                      height="16"
+                      viewBox="0 0 45 16"
+                      fill="none"
+                    >
+                      <path
+                        d="M43.89 8.70711C44.2805 8.31658 44.2805 7.68342 43.89 7.29289L37.526 0.928932C37.1355 0.538408 36.5024 0.538408 36.1118 0.928932C35.7213 1.31946 35.7213 1.95262 36.1118 2.34315L41.7687 8L36.1118 13.6569C35.7213 14.0474 35.7213 14.6805 36.1118 15.0711C36.5024 15.4616 37.1355 15.4616 37.526 15.0711L43.89 8.70711ZM0 9H43.1829V7H0V9Z"
+                        fill="white"
+                      />
+                    </svg>
+                  </div>
+                ) : (
+                  isFormValid() && (
+                    <button className="cont-button" onClick={handleDownload}>
+                      {isLoading ? (
+                        <ClipLoader color={"#ffffff"} size={20} />
+                      ) : (
+                        "Download my free brochure"
+                      )}
+                    </button>
+                  )
+                )}
+                <p>
+                  🔒 We respect your privacy & promise never to rent or share your
+                  details with anybody without your consent
+                </p>
               </div>
-            </div>
-          )}
-
-          {currentStep === 4 && (
-            <div className="motivations-container">
-              <h4>What is your biggest Motivation to enroll in mba</h4>
-              <div className="motivations-group">
-                <label
-                  className={`motivations-option ${
-                    formData.motivations.includes("To Get Higher-Paying Job")
-                      ? "selected"
-                      : ""
-                  }`}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="30"
-                    height="30"
-                    viewBox="0 0 30 30"
-                    fill="none"
-                  >
-                    <circle cx="15" cy="15" r="15" fill="#EDE6D8" />
-                    {formData.motivations.includes(
-                      "To Get Higher-Paying Job"
-                    ) && (
-                      <path
-                        d="M8 14.9565L12.5435 19.5L22.0435 10"
-                        stroke="#259D4A"
-                        strokeWidth="3.30435"
-                      />
-                    )}
-                  </svg>
-                  <input
-                    type="checkbox"
-                    name="motivations"
-                    value="To Get Higher-Paying Job"
-                    checked={formData.motivations.includes(
-                      "To Get Higher-Paying Job"
-                    )}
-                    onChange={handleCheckboxChange}
-                  />
-                  <p>To Get Higher-Paying Job</p>
-                </label>
-
-                <label
-                  className={`motivations-option ${
-                    formData.motivations.includes("Increased Job Security")
-                      ? "selected"
-                      : ""
-                  }`}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="30"
-                    height="30"
-                    viewBox="0 0 30 30"
-                    fill="none"
-                  >
-                    <circle cx="15" cy="15" r="15" fill="#EDE6D8" />
-                    {formData.motivations.includes(
-                      "Increased Job Security"
-                    ) && (
-                      <path
-                        d="M8 14.9565L12.5435 19.5L22.0435 10"
-                        stroke="#259D4A"
-                        strokeWidth="3.30435"
-                      />
-                    )}
-                  </svg>
-                  <input
-                    type="checkbox"
-                    name="motivations"
-                    value="Increased Job Security"
-                    checked={formData.motivations.includes(
-                      "Increased Job Security"
-                    )}
-                    onChange={handleCheckboxChange}
-                  />
-                  <p>Increased Job Security</p>
-                </label>
-
-                <label
-                  className={`motivations-option ${
-                    formData.motivations.includes("Move to Another Industry")
-                      ? "selected"
-                      : ""
-                  }`}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="30"
-                    height="30"
-                    viewBox="0 0 30 30"
-                    fill="none"
-                  >
-                    <circle cx="15" cy="15" r="15" fill="#EDE6D8" />
-                    {formData.motivations.includes(
-                      "Move to Another Industry"
-                    ) && (
-                      <path
-                        d="M8 14.9565L12.5435 19.5L22.0435 10"
-                        stroke="#259D4A"
-                        strokeWidth="3.30435"
-                      />
-                    )}
-                  </svg>
-                  <input
-                    type="checkbox"
-                    name="motivations"
-                    value="Move to Another Industry"
-                    checked={formData.motivations.includes(
-                      "Move to Another Industry"
-                    )}
-                    onChange={handleCheckboxChange}
-                  />
-                  <p>Move to Another Industry</p>
-                </label>
-
-                <label
-                  className={`motivations-option ${
-                    formData.motivations.includes("Start own business")
-                      ? "selected"
-                      : ""
-                  }`}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="30"
-                    height="30"
-                    viewBox="0 0 30 30"
-                    fill="none"
-                  >
-                    <circle cx="15" cy="15" r="15" fill="#EDE6D8" />
-                    {formData.motivations.includes("Start own business") && (
-                      <path
-                        d="M8 14.9565L12.5435 19.5L22.0435 10"
-                        stroke="#259D4A"
-                        strokeWidth="3.30435"
-                      />
-                    )}
-                  </svg>
-                  <input
-                    type="checkbox"
-                    name="motivations"
-                    value="Start own business"
-                    checked={formData.motivations.includes(
-                      "Start own business"
-                    )}
-                    onChange={handleCheckboxChange}
-                  />
-                  <p>Start own business</p>
-                </label>
-
-                <label
-                  className={`motivations-option ${
-                    formData.motivations.includes("Promotion in Same Company")
-                      ? "selected"
-                      : ""
-                  }`}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="30"
-                    height="30"
-                    viewBox="0 0 30 30"
-                    fill="none"
-                  >
-                    <circle cx="15" cy="15" r="15" fill="#EDE6D8" />
-                    {formData.motivations.includes(
-                      "Promotion in Same Company"
-                    ) && (
-                      <path
-                        d="M8 14.9565L12.5435 19.5L22.0435 10"
-                        stroke="#259D4A"
-                        strokeWidth="3.30435"
-                      />
-                    )}
-                  </svg>
-                  <input
-                    type="checkbox"
-                    name="motivations"
-                    value="Promotion in Same Company"
-                    checked={formData.motivations.includes(
-                      "Promotion in Same Company"
-                    )}
-                    onChange={handleCheckboxChange}
-                  />
-                  <p>Promotion in Same Company</p>
-                </label>
-
-                <label
-                  className={`motivations-option ${
-                    formData.motivations.includes("Migration") ? "selected" : ""
-                  }`}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="30"
-                    height="30"
-                    viewBox="0 0 30 30"
-                    fill="none"
-                  >
-                    <circle cx="15" cy="15" r="15" fill="#EDE6D8" />
-                    {formData.motivations.includes("Migration") && (
-                      <path
-                        d="M8 14.9565L12.5435 19.5L22.0435 10"
-                        stroke="#259D4A"
-                        strokeWidth="3.30435"
-                      />
-                    )}
-                  </svg>
-                  <input
-                    type="checkbox"
-                    name="motivations"
-                    value="Migration"
-                    checked={formData.motivations.includes("Migration")}
-                    onChange={handleCheckboxChange}
-                  />
-                  <p>Migration</p>
-                </label>
-
-                <label
-                  className={`motivations-option ${
-                    formData.motivations.includes(
-                      "Expand My Skills & Knowledge"
-                    )
-                      ? "selected"
-                      : ""
-                  }`}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="30"
-                    height="30"
-                    viewBox="0 0 30 30"
-                    fill="none"
-                  >
-                    <circle cx="15" cy="15" r="15" fill="#EDE6D8" />
-                    {formData.motivations.includes(
-                      "Expand My Skills & Knowledge"
-                    ) && (
-                      <path
-                        d="M8 14.9565L12.5435 19.5L22.0435 10"
-                        stroke="#259D4A"
-                        strokeWidth="3.30435"
-                      />
-                    )}
-                  </svg>
-                  <input
-                    type="checkbox"
-                    name="motivations"
-                    value="Expand My Skills & Knowledge"
-                    checked={formData.motivations.includes(
-                      "Expand My Skills & Knowledge"
-                    )}
-                    onChange={handleCheckboxChange}
-                  />
-                  <p>Expand My Skills & Knowledge</p>
-                </label>
-
-                <label
-                  className={`motivations-option ${
-                    formData.motivations.includes("Other") ? "selected" : ""
-                  }`}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="30"
-                    height="30"
-                    viewBox="0 0 30 30"
-                    fill="none"
-                  >
-                    <circle cx="15" cy="15" r="15" fill="#EDE6D8" />
-                    {formData.motivations.includes("Other") && (
-                      <path
-                        d="M8 14.9565L12.5435 19.5L22.0435 10"
-                        stroke="#259D4A"
-                        strokeWidth="3.30435"
-                      />
-                    )}
-                  </svg>
-                  <input
-                    type="checkbox"
-                    name="motivations"
-                    value="Other"
-                    checked={formData.motivations.includes("Other")}
-                    onChange={handleCheckboxChange}
-                  />
-                  <p>Other</p>
-                </label>
-              </div>
-            </div>
-          )}
-
-          <div className="btn2">
-            {currentStep < 4 ? (
-              <div
-                onClick={isStepValid() ? handleNext : null}
-                className={`cont-button ${!isStepValid() ? "disabled" : ""}`}
+            </>
+          ) : (
+            <div className="otp-container">
+              <h1>Enter Verification Code</h1>
+              <input
+                type="text"
+                maxLength="4"
+                value={otp}
+                onChange={(e) => {
+                  setOtp(e.target.value.replace(/\D/g, ''));
+                  setOtpError('');
+                }}
+                placeholder="Enter 4-digit OTP"
+              />
+              {otpError && <p className="text-red-500">{otpError}</p>}
+              <button
+                className="cont-button"
+                onClick={handleOtpSubmit}
+                disabled={isLoading}
               >
-                <button disabled={!isStepValid()}>Continue</button>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="45"
-                  height="16"
-                  viewBox="0 0 45 16"
-                  fill="none"
-                >
-                  <path
-                    d="M43.89 8.70711C44.2805 8.31658 44.2805 7.68342 43.89 7.29289L37.526 0.928932C37.1355 0.538408 36.5024 0.538408 36.1118 0.928932C35.7213 1.31946 35.7213 1.95262 36.1118 2.34315L41.7687 8L36.1118 13.6569C35.7213 14.0474 35.7213 14.6805 36.1118 15.0711C36.5024 15.4616 37.1355 15.4616 37.526 15.0711L43.89 8.70711ZM0 9H43.1829V7H0V9Z"
-                    fill="white"
-                  />
-                </svg>
-              </div>
-            ) : (
-              isFormValid() && (
-                <button className="cont-button" onClick={handleDownload}>
-                  {isLoading ? (
-                    <ClipLoader color={"#ffffff"} size={20} />
-                  ) : (
-                    "Download my free brochure"
-                  )}
-                </button>
-              )
-            )}
-            <p>
-              🔒 We respect your privacy & promise never to rent or share your
-              details with anybody without your consent
-            </p>
-          </div>
+                {isLoading ? (
+                  <ClipLoader color={"#ffffff"} size={20} />
+                ) : (
+                  "Verify & Download"
+                )}
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </CSSTransition>
+
   );
 }
 
