@@ -124,22 +124,45 @@ const MultiStepForm = () => {
       );
 
       if (response.data.success) {
-        const otpResponse = await axios.post("http://localhost:5000/send-otp", {
-          phone: formData.whatsapp,
-          name: formData.name,
-          heading: "OTP Verification",
-        });
 
-        const otp = otpResponse.data.otp;
-        // Store OTP in localStorage with expiry
-        const expiryTime = Date.now() + 10 * 60 * 1000; // 10 minutes
-        localStorage.setItem(
-          "otp_data",
-          JSON.stringify({ otp, expiry: expiryTime })
+        const ipAddress = await axios.get("https://api.ipify.org?format=json");
+        const dataToSend = {
+          ...formData,
+          currentUrl: currentUrl,
+          ipAddress: ipAddress.data.ip,
+          otpVerified: false,
+        };
+
+        const webhookResponse = await axios.post(
+          "https://connect.pabbly.com/workflow/sendwebhookdata/IjU3NjUwNTZiMDYzNTA0MzA1MjZhNTUzNjUxMzUi_pc",
+          dataToSend,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
         );
 
-        setOtpStep(true); // Show OTP input page
-        setIsLoading(false);
+        if (webhookResponse.status === 200) {
+          const otpResponse = await axios.post("http://localhost:5000/send-otp", {
+            phone: formData.whatsapp,
+            name: formData.name,
+            heading: "OTP Verification",
+          });
+
+          const otp = otpResponse.data.otp;
+          // Store OTP in localStorage with expiry
+          const expiryTime = Date.now() + 10 * 60 * 1000; // 10 minutes
+          localStorage.setItem(
+            "otp_data",
+            JSON.stringify({ otp, expiry: expiryTime })
+          );
+
+          setOtpStep(true); // Show OTP input page
+          setIsLoading(false);
+        } else {
+          console.error("Failed to send form data");
+        }
       } else {
         alert("reCAPTCHA verification failed. Please try again.");
       }
@@ -159,21 +182,10 @@ const MultiStepForm = () => {
     // Add optins
   ];
 
-  const getIPAddress = async () => {
-    try {
-      const response = await axios.get('https://api.ipify.org?format=json');
-      return response.data.ip;
-    } catch (error) {
-      console.error("Failed to get IP address:", error);
-      return null;
-    }
-  };
-
   if (!executeRecaptcha) {
     console.error("reCAPTCHA has not been initialized correctly");
     return;
   }
-
 
   const verifyOtp = (enteredOtp) => {
     const otpData = JSON.parse(localStorage.getItem("otp_data"));
@@ -193,39 +205,31 @@ const MultiStepForm = () => {
   };
 
   const handleSubmit = async (verified = false) => {
-
-    console.log("hey")
     setIsLoading(true);
 
     try {
-      console.log("try")
-      const response = await axios.post(
-        "https://googlerecaptchaserver.onrender.com/verify-recaptcha",
-        { token }
-      );
+      const ipAddress = await axios.get("https://api.ipify.org?format=json");
+      const dataToSend = {
+        ...formData,
+        currentUrl: currentUrl,
+        ipAddress: ipAddress.data.ip,
+        otpVerified: verified,
+      };
 
-      if (response.data.success) {
-        const ipAddress = await axios.get("https://api.ipify.org?format=json");
-        const dataToSend = {
-          ...formData,
-          currentUrl: currentUrl,
-          ipAddress: ipAddress.data.ip,
-          verified,
-        };
-
-        const webhookUrl =
-          "https://connect.pabbly.com/workflow/sendwebhookdata/IjU3NjUwNTZiMDYzNTA0MzA1MjZhNTUzNjUxMzUi_pc";
-
-        const webhookResponse = await axios.post(webhookUrl, dataToSend);
-
-        if (webhookResponse.status === 200) {
-          console.log("Form data sent successfully");
-          window.location.href = "https://offer.learnersuae.com/confirmation/";
-        } else {
-          console.error("Failed to send form data");
+      const webhookResponse = await axios.post(
+        "https://connect.pabbly.com/workflow/sendwebhookdata/IjU3NjUwNTZiMDYzNTA0MzA1MjZhNTUzNjUxMzUi_pc",
+        dataToSend,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
         }
+      );
+      if (webhookResponse.status === 200) {
+        console.log("Form data sent successfully");
+        window.location.href = "https://offer.learnersuae.com/confirmation/";
       } else {
-        alert("reCAPTCHA verification failed. Please try again.");
+        console.error("Failed to send form data");
       }
     } catch (error) {
       console.error("Error sending form data:", error);
@@ -233,6 +237,8 @@ const MultiStepForm = () => {
       setIsLoading(false);
     }
   };
+
+  console.log(isLoading+"loading")
 
   const renderError = (fieldName) => {
     if (formErrors[fieldName]) {
