@@ -211,7 +211,7 @@ function PopupTwo({ closePopup }) {
 
         if (response.data.success) {
           // Send OTP
-          const otpResponse = await axios.post("http://localhost:5000/send-otp", {
+          const otpResponse = await axios.post("https://googlerecaptchaserver.onrender.com/send-otp", {
             phone: formData.phone,
             heading: "Learners University college",
             name: formData.name

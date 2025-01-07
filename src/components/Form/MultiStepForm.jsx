@@ -34,8 +34,18 @@ const MultiStepForm = () => {
   const [formErrors, setFormErrors] = useState({});
 
   const validateWhatsAppNumber = (phone, countryCode) => {
-    const phoneNumber = parsePhoneNumberFromString(phone, countryCode);
-    return phoneNumber && phoneNumber.isValid();
+    const isManuallyValid = phone.length > 8;
+
+    if (!isManuallyValid) {
+      return false;
+    }
+    try {
+      const parsedNumber = parsePhoneNumberFromString(phone, countryCode);
+      return parsedNumber ? parsedNumber.isValid() : false;
+    } catch (error) {
+      console.error("Phone validation error:", error);
+      return false;
+    }
   };
 
   const handleChange = (e) => {
@@ -144,7 +154,7 @@ const MultiStepForm = () => {
         );
 
         if (webhookResponse.status === 200) {
-          const otpResponse = await axios.post("http://localhost:5000/send-otp", {
+          const otpResponse = await axios.post("https://googlerecaptchaserver.onrender.com/send-otp", {
             phone: formData.whatsapp,
             name: formData.name,
             heading: "OTP Verification",
@@ -361,7 +371,7 @@ const MultiStepForm = () => {
             <h2>And Phone Number?</h2>
             <PhoneInput
               country={formData.countryCode.toLowerCase()}
-              // excludeCountries={"in,pk"}
+              excludeCountries={"in,pk"}
               value={formData.whatsapp}
               placeholder={"Type Here..."}
               onChange={(phone, country) =>
