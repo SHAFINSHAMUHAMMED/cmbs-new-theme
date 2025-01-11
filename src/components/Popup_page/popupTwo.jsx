@@ -26,8 +26,8 @@ function PopupTwo({ closePopup }) {
   const [isActive, setIsActive] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showOtpInput, setShowOtpInput] = useState(false);
-  const [otp, setOtp] = useState("");
-  const [otpError, setOtpError] = useState("");
+  // const [otp, setOtp] = useState("");
+  // const [otpError, setOtpError] = useState("");
 
   const { togglePopup } = usePopup();
   const { executeRecaptcha } = useGoogleReCaptcha();
@@ -39,28 +39,28 @@ function PopupTwo({ closePopup }) {
     return () => clearTimeout(timeout);
   }, []);
 
-  const storeOtpWithExpiry = (otp) => {
-    const now = new Date();
-    const item = {
-      value: otp,
-      expiry: now.getTime() + 10 * 60 * 1000, // 10 minutes from now
-    };
-    localStorage.setItem("storedOtp", JSON.stringify(item));
-  };
-  const itemStr = localStorage.getItem("storedOtp");
-  const getStoredOtp = () => {
-    const itemStr = localStorage.getItem("storedOtp");
-    if (!itemStr) return null;
+  // const storeOtpWithExpiry = (otp) => {
+  //   const now = new Date();
+  //   const item = {
+  //     value: otp,
+  //     expiry: now.getTime() + 10 * 60 * 1000, // 10 minutes from now
+  //   };
+  //   localStorage.setItem("storedOtp", JSON.stringify(item));
+  // };
+  // const itemStr = localStorage.getItem("storedOtp");
+  // const getStoredOtp = () => {
+  //   const itemStr = localStorage.getItem("storedOtp");
+  //   if (!itemStr) return null;
 
-    const item = JSON.parse(itemStr);
-    const now = new Date();
+  //   const item = JSON.parse(itemStr);
+  //   const now = new Date();
 
-    if (now.getTime() > item.expiry) {
-      localStorage.removeItem("storedOtp");
-      return null;
-    }
-    return item.value;
-  };
+  //   if (now.getTime() > item.expiry) {
+  //     localStorage.removeItem("storedOtp");
+  //     return null;
+  //   }
+  //   return item.value;
+  // };
 
 
   // Validate phone number using libphonenumber-js
@@ -163,34 +163,34 @@ function PopupTwo({ closePopup }) {
     return;
   }
 
-  const handleOtpSubmit = async () => {
-    const storedOtp = getStoredOtp();
-    if (otp == storedOtp) {
-      setIsLoading(true);
-      try {
-        const ipAddress = await getIPAddress();
-        const verifiedData = { ...formData, ipAddress, otpVerified: true };
+  // const handleOtpSubmit = async () => {
+  //   const storedOtp = getStoredOtp();
+  //   if (otp == storedOtp) {
+  //     setIsLoading(true);
+  //     try {
+  //       const ipAddress = await getIPAddress();
+  //       const verifiedData = { ...formData, ipAddress, otpVerified: true };
 
-        await axios.post(
-          "https://connect.pabbly.com/workflow/sendwebhookdata/IjU3NjYwNTZmMDYzMDA0MzQ1MjZkNTUzMzUxM2Ei_pc",
-          verifiedData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
+  //       await axios.post(
+  //         "https://connect.pabbly.com/workflow/sendwebhookdata/IjU3NjYwNTZmMDYzMDA0MzQ1MjZkNTUzMzUxM2Ei_pc",
+  //         verifiedData,
+  //         {
+  //           headers: {
+  //             "Content-Type": "multipart/form-data",
+  //           },
+  //         }
+  //       );
 
-        window.location.href = "https://offer.learnersuae.com/brochure-thank-you/";
-      } catch (error) {
-        console.error("Error submitting verified data:", error);
-        setOtpError("Failed to process verification. Please try again.");
-      }
-      setIsLoading(false);
-    } else {
-      setOtpError("Invalid OTP. Please try again.");
-    }
-  };
+  //       window.location.href = "https://offer.learnersuae.com/brochure-thank-you/";
+  //     } catch (error) {
+  //       console.error("Error submitting verified data:", error);
+  //       setOtpError("Failed to process verification. Please try again.");
+  //     }
+  //     setIsLoading(false);
+  //   } else {
+  //     setOtpError("Invalid OTP. Please try again.");
+  //   }
+  // };
 
   const handleDownload = async (e) => {
     e.preventDefault();
@@ -211,14 +211,13 @@ function PopupTwo({ closePopup }) {
 
         if (response.data.success) {
           // Send OTP
-          const otpResponse = await axios.post("https://googlerecaptchaserver.onrender.com/send-otp", {
-            phone: formData.phone,
-            heading: "Learners University college",
-            name: formData.name
-          });
+          // const otpResponse = await axios.post("https://googlerecaptchaserver.onrender.com/send-otp", {
+          //   phone: formData.phone,
+          //   heading: "Learners University college",
+          //   name: formData.name
+          // });
 
-          // Store OTP with expiry
-          storeOtpWithExpiry(otpResponse.data.otp);
+          // storeOtpWithExpiry(otpResponse.data.otp);
 
           // Send initial data to Pabbly with verified: false
           const ipAddress = await getIPAddress();
@@ -233,8 +232,9 @@ function PopupTwo({ closePopup }) {
               },
             }
           );
+        window.location.href = "https://offer.learnersuae.com/brochure-thank-you/";
 
-          setShowOtpInput(true);
+          // setShowOtpInput(true);
         } else {
           alert("reCAPTCHA verification failed. Please try again.");
         }
