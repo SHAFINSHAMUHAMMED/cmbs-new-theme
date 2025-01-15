@@ -20,6 +20,7 @@ const MultiStepForm = () => {
   const { executeRecaptcha } = useGoogleReCaptcha();
   const [otpStep, setOtpStep] = useState(false); // State to handle OTP input step
   const [otp, setOtp] = useState("");
+  const [otpVerifiedPopup, setOtpVerifiedPopup] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     specialization: "",
@@ -145,6 +146,7 @@ const MultiStepForm = () => {
 
         const webhookResponse = await axios.post(
           "https://connect.pabbly.com/workflow/sendwebhookdata/IjU3NjUwNTZiMDYzNTA0MzA1MjZhNTUzNjUxMzUi_pc",
+          // "https://connect.pabbly.com/workflow/sendwebhookdata/IjU3NjUwNTZiMDYzNTA0MzA1MjZhNTUzNjUxMzUi_pc", //test link
           dataToSend,
           {
             headers: {
@@ -152,28 +154,27 @@ const MultiStepForm = () => {
             },
           }
         );
-        window.location.href = "https://offer.learnersuae.com/confirmation/";
 
-        // if (webhookResponse.status === 200) {
-        //   const otpResponse = await axios.post("https://googlerecaptchaserver.onrender.com/send-otp", {
-        //     phone: formData.whatsapp,
-        //     name: formData.name,
-        //     heading: "OTP Verification",
-        //   });
+        if (webhookResponse.status === 200) {
+          const otpResponse = await axios.post("https://googlerecaptchaserver.onrender.com/send-otp", {
+            phone: formData.whatsapp,
+            name: formData.name,
+            heading: "OTP Verification",
+          });
 
-        //   const otp = otpResponse.data.otp;
-        //   // Store OTP in localStorage with expiry
-        //   const expiryTime = Date.now() + 10 * 60 * 1000; // 10 minutes
-        //   localStorage.setItem(
-        //     "otp_data",
-        //     JSON.stringify({ otp, expiry: expiryTime })
-        //   );
+          const otp = otpResponse.data.otp;
+          // Store OTP in localStorage with expiry
+          const expiryTime = Date.now() + 10 * 60 * 1000; // 10 minutes
+          localStorage.setItem(
+            "otp_data",
+            JSON.stringify({ otp, expiry: expiryTime })
+          );
 
-        //   setOtpStep(true); // Show OTP input page
-        //   setIsLoading(false);
-        // } else {
-        //   console.error("Failed to send form data");
-        // }
+          setOtpStep(true); // Show OTP input page
+          setIsLoading(false);
+        } else {
+          console.error("Failed to send form data");
+        }
       } else {
         alert("reCAPTCHA verification failed. Please try again.");
       }
@@ -206,13 +207,19 @@ const MultiStepForm = () => {
     return otpData.otp == enteredOtp;
   };
 
-  // const handleOtpSubmit = async () => {
-  //   if (verifyOtp(otp)) {
-  //     handleSubmit(true); // Pass verified: true
-  //   } else {
-  //     alert("Invalid OTP or OTP has expired. Please request a new one.");
-  //   }
-  // };
+  const handleOtpSubmit = async () => {
+    if (verifyOtp(otp)) {
+      setOtpVerifiedPopup(true); // Show the OTP Verified popup
+  
+      // Redirect after 2 seconds
+      setTimeout(() => {
+        window.location.href = "https://offer.learnersuae.com/confirmation/";
+      }, 2000);
+    } else {
+      alert("Invalid OTP or OTP has expired. Please request a new one.");
+    }
+  };
+  
 
   const handleSubmit = async (verified = false) => {
     setIsLoading(true);
@@ -228,6 +235,7 @@ const MultiStepForm = () => {
 
       const webhookResponse = await axios.post(
         "https://connect.pabbly.com/workflow/sendwebhookdata/IjU3NjYwNTZmMDYzMDA0MzQ1MjZkNTUzMzUxM2Ei_pc",
+        // "https://connect.pabbly.com/workflow/sendwebhookdata/IjU3NjUwNTZiMDYzNTA0MzA1MjZhNTUzNjUxMzUi_pc", //test link
         dataToSend,
         {
           headers: {
@@ -255,24 +263,24 @@ const MultiStepForm = () => {
   };
 
   const renderForm = () => {
-    // if (otpStep) {
-    //   return (
-    //     <>
-    //       <h2>Enter the OTP sent to your phone</h2>
-    //       <input
-    //         type="text"
-    //         value={otp}
-    //         onChange={(e) => setOtp(e.target.value)}
-    //         placeholder="Enter OTP"
-    //       />
-    //       <button type="button" onClick={handleOtpSubmit}>
-    //         {isLoading ? (
-    //           <ClipLoader color={"#ffffff"} size={20} />
-    //         ) : "Verify OTP"}
-    //       </button>
-    //     </>
-    //   );
-    // }
+    if (otpStep) {
+      return (
+        <>
+          <h2>Enter the OTP sent to your phone</h2>
+          <input
+            type="text"
+            value={otp}
+            onChange={(e) => setOtp(e.target.value)}
+            placeholder="Enter OTP"
+          />
+          <button type="button" onClick={handleOtpSubmit}>
+            {isLoading ? (
+              <ClipLoader color={"#ffffff"} size={20} />
+            ) : "Verify OTP"}
+          </button>
+        </>
+      );
+    }
     switch (currentStep) {
       case 1:
         return (
@@ -441,6 +449,30 @@ const MultiStepForm = () => {
         </svg>
       </div>
       <Claim_description color="rgba(76, 70, 91, 0.79)" />
+      {otpVerifiedPopup && (
+  <div className="otp-verified-overlay">
+    <div className="otp-verified-popup">
+      <div className="tick-animation">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 50 50"
+          width="80"
+          height="80"
+        >
+          <circle cx="25" cy="25" r="23" stroke="#1A0060" strokeWidth="3" fill="none" />
+          <path
+            d="M15 25L22 32L35 18"
+            stroke="#1A0060"
+            strokeWidth="3"
+            fill="none"
+          />
+        </svg>
+      </div>
+      <h2>OTP Verified Successfully!</h2>
+    </div>
+  </div>
+)}
+
     </div>
   );
 };

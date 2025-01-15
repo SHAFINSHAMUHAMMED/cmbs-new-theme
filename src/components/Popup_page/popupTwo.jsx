@@ -26,9 +26,9 @@ function PopupTwo({ closePopup }) {
   const [isActive, setIsActive] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showOtpInput, setShowOtpInput] = useState(false);
-  // const [otp, setOtp] = useState("");
-  // const [otpError, setOtpError] = useState("");
-
+  const [otp, setOtp] = useState("");
+  const [otpError, setOtpError] = useState("");
+  const [otpVerified, setOtpVerified] = useState(false); 
   const { togglePopup } = usePopup();
   const { executeRecaptcha } = useGoogleReCaptcha();
 
@@ -39,28 +39,28 @@ function PopupTwo({ closePopup }) {
     return () => clearTimeout(timeout);
   }, []);
 
-  // const storeOtpWithExpiry = (otp) => {
-  //   const now = new Date();
-  //   const item = {
-  //     value: otp,
-  //     expiry: now.getTime() + 10 * 60 * 1000, // 10 minutes from now
-  //   };
-  //   localStorage.setItem("storedOtp", JSON.stringify(item));
-  // };
-  // const itemStr = localStorage.getItem("storedOtp");
-  // const getStoredOtp = () => {
-  //   const itemStr = localStorage.getItem("storedOtp");
-  //   if (!itemStr) return null;
+  const storeOtpWithExpiry = (otp) => {
+    const now = new Date();
+    const item = {
+      value: otp,
+      expiry: now.getTime() + 10 * 60 * 1000, // 10 minutes from now
+    };
+    localStorage.setItem("storedOtp", JSON.stringify(item));
+  };
+  const itemStr = localStorage.getItem("storedOtp");
+  const getStoredOtp = () => {
+    const itemStr = localStorage.getItem("storedOtp");
+    if (!itemStr) return null;
 
-  //   const item = JSON.parse(itemStr);
-  //   const now = new Date();
+    const item = JSON.parse(itemStr);
+    const now = new Date();
 
-  //   if (now.getTime() > item.expiry) {
-  //     localStorage.removeItem("storedOtp");
-  //     return null;
-  //   }
-  //   return item.value;
-  // };
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem("storedOtp");
+      return null;
+    }
+    return item.value;
+  };
 
 
   // Validate phone number using libphonenumber-js
@@ -163,34 +163,38 @@ function PopupTwo({ closePopup }) {
     return;
   }
 
-  // const handleOtpSubmit = async () => {
-  //   const storedOtp = getStoredOtp();
-  //   if (otp == storedOtp) {
-  //     setIsLoading(true);
-  //     try {
-  //       const ipAddress = await getIPAddress();
-  //       const verifiedData = { ...formData, ipAddress, otpVerified: true };
+  const handleOtpSubmit = async () => {
+    const storedOtp = getStoredOtp();
+    if (otp == storedOtp) {
+      setIsLoading(true);
+      try {
+        const ipAddress = await getIPAddress();
+        const verifiedData = { ...formData, ipAddress, otpVerified: true };
 
-  //       await axios.post(
-  //         "https://connect.pabbly.com/workflow/sendwebhookdata/IjU3NjYwNTZmMDYzMDA0MzQ1MjZkNTUzMzUxM2Ei_pc",
-  //         verifiedData,
-  //         {
-  //           headers: {
-  //             "Content-Type": "multipart/form-data",
-  //           },
-  //         }
-  //       );
+        await axios.post(
+          "https://connect.pabbly.com/workflow/sendwebhookdata/IjU3NjYwNTZmMDYzMDA0MzQ1MjZkNTUzMzUxM2Ei_pc",
+        // "https://connect.pabbly.com/workflow/sendwebhookdata/IjU3NjUwNTZiMDYzNTA0MzA1MjZhNTUzNjUxMzUi_pc", //test link
+          verifiedData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
 
-  //       window.location.href = "https://offer.learnersuae.com/brochure-thank-you/";
-  //     } catch (error) {
-  //       console.error("Error submitting verified data:", error);
-  //       setOtpError("Failed to process verification. Please try again.");
-  //     }
-  //     setIsLoading(false);
-  //   } else {
-  //     setOtpError("Invalid OTP. Please try again.");
-  //   }
-  // };
+        setOtpVerified(true); // Show the OTP verified popup
+        setTimeout(() => {
+          window.location.href = "https://offer.learnersuae.com/brochure-thank-you/";
+        }, 3000); // Delay before redirecting
+      } catch (error) {
+        console.error("Error submitting verified data:", error);
+        setOtpError("Failed to process verification. Please try again.");
+      }
+      setIsLoading(false);
+    } else {
+      setOtpError("Invalid OTP. Please try again.");
+    }
+  };
 
   const handleDownload = async (e) => {
     e.preventDefault();
@@ -211,13 +215,13 @@ function PopupTwo({ closePopup }) {
 
         if (response.data.success) {
           // Send OTP
-          // const otpResponse = await axios.post("https://googlerecaptchaserver.onrender.com/send-otp", {
-          //   phone: formData.phone,
-          //   heading: "Learners University college",
-          //   name: formData.name
-          // });
+          const otpResponse = await axios.post("https://googlerecaptchaserver.onrender.com/send-otp", {
+            phone: formData.phone,
+            heading: "Learners University college",
+            name: formData.name
+          });
 
-          // storeOtpWithExpiry(otpResponse.data.otp);
+          storeOtpWithExpiry(otpResponse.data.otp);
 
           // Send initial data to Pabbly with verified: false
           const ipAddress = await getIPAddress();
@@ -225,6 +229,7 @@ function PopupTwo({ closePopup }) {
 
           await axios.post(
             "https://connect.pabbly.com/workflow/sendwebhookdata/IjU3NjUwNTY5MDYzZTA0MzA1MjZmNTUzNTUxMzUi_pc",
+              // "https://connect.pabbly.com/workflow/sendwebhookdata/IjU3NjUwNTZiMDYzNTA0MzA1MjZhNTUzNjUxMzUi_pc", //test link
             dataToSend,
             {
               headers: {
@@ -232,9 +237,8 @@ function PopupTwo({ closePopup }) {
               },
             }
           );
-        window.location.href = "https://offer.learnersuae.com/brochure-thank-you/";
 
-          // setShowOtpInput(true);
+          setShowOtpInput(true);
         } else {
           alert("reCAPTCHA verification failed. Please try again.");
         }
@@ -278,7 +282,8 @@ function PopupTwo({ closePopup }) {
           />
         </svg>
         <div className="popup2-sub">
-          {!showOtpInput ? (
+          {!otpVerified ? (
+            !showOtpInput ? (
             <>
               <h1 className="popup2-main-h1">
                 Get Instant Access To The CMBS MBA Brochure
@@ -750,6 +755,36 @@ function PopupTwo({ closePopup }) {
                   "Verify & Download"
                 )}
               </button>
+            </div>
+          )
+          ): (
+            <div className="otp-verified-overlay">
+              <div className="otp-verified-popup">
+                <div className="tick-animation">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 50 50"
+                    width="80"
+                    height="80"
+                  >
+                    <circle
+                      cx="25"
+                      cy="25"
+                      r="23"
+                      stroke="#1A0060"
+                      strokeWidth="3"
+                      fill="none"
+                    />
+                    <path
+                      d="M15 25L22 32L35 18"
+                      stroke="#1A0060"
+                      strokeWidth="3"
+                      fill="none"
+                    />
+                  </svg>
+                </div>
+                <h2>OTP Verified Successfully!</h2>
+              </div>
             </div>
           )}
         </div>
