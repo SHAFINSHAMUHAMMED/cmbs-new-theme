@@ -325,7 +325,7 @@ function PopupTwo({ closePopup }) {
                       country={formData.countryCode.toLowerCase()}
                       value={formData.phone}
                       placeholder="Enter your Phone Number"
-                      // excludeCountries={["in", "pk"]}
+                      excludeCountries={["in", "pk"]}
                       onChange={(value, country) =>
                         setFormData({
                           ...formData,
