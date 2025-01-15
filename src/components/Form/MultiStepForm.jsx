@@ -11,12 +11,11 @@ import axios from "axios";
 import { parsePhoneNumberFromString } from "libphonenumber-js"; // Import libphonenumber-js
 import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 
-
 const MultiStepForm = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [showAnimation, setShowAnimation] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
-  const [currentUrl, setCurrentUrl] = useState('');
+  const [currentUrl, setCurrentUrl] = useState("");
   const { executeRecaptcha } = useGoogleReCaptcha();
   const [otpStep, setOtpStep] = useState(false); // State to handle OTP input step
   const [otp, setOtp] = useState("");
@@ -28,8 +27,7 @@ const MultiStepForm = () => {
     // location: "",
     email: "",
     whatsapp: "",
-    countryCode: "AE"
-
+    countryCode: "AE",
   });
 
   const [formErrors, setFormErrors] = useState({});
@@ -135,7 +133,6 @@ const MultiStepForm = () => {
       );
 
       if (response.data.success) {
-
         const ipAddress = await axios.get("https://api.ipify.org?format=json");
         const dataToSend = {
           ...formData,
@@ -156,11 +153,14 @@ const MultiStepForm = () => {
         );
 
         if (webhookResponse.status === 200) {
-          const otpResponse = await axios.post("https://googlerecaptchaserver.onrender.com/send-otp", {
-            phone: formData.whatsapp,
-            name: formData.name,
-            heading: "OTP Verification",
-          });
+          const otpResponse = await axios.post(
+            "https://googlerecaptchaserver.onrender.com/send-otp",
+            {
+              phone: formData.whatsapp,
+              name: formData.name,
+              heading: "OTP Verification",
+            }
+          );
 
           const otp = otpResponse.data.otp;
           // Store OTP in localStorage with expiry
@@ -210,7 +210,8 @@ const MultiStepForm = () => {
   const handleOtpSubmit = async () => {
     if (verifyOtp(otp)) {
       setOtpVerifiedPopup(true); // Show the OTP Verified popup
-  
+      await handleSubmit(true); // Pass `true` to indicate OTP is verified
+
       // Redirect after 2 seconds
       setTimeout(() => {
         window.location.href = "https://offer.learnersuae.com/confirmation/";
@@ -219,7 +220,6 @@ const MultiStepForm = () => {
       alert("Invalid OTP or OTP has expired. Please request a new one.");
     }
   };
-  
 
   const handleSubmit = async (verified = false) => {
     setIsLoading(true);
@@ -244,7 +244,7 @@ const MultiStepForm = () => {
         }
       );
       if (webhookResponse.status === 200) {
-        window.location.href = "https://offer.learnersuae.com/confirmation/";
+        console.log("Data sent to webhook successfully.");
       } else {
         console.error("Failed to send form data");
       }
@@ -276,7 +276,9 @@ const MultiStepForm = () => {
           <button type="button" onClick={handleOtpSubmit}>
             {isLoading ? (
               <ClipLoader color={"#ffffff"} size={20} />
-            ) : "Verify OTP"}
+            ) : (
+              "Verify OTP"
+            )}
           </button>
         </>
       );
@@ -384,7 +386,11 @@ const MultiStepForm = () => {
               value={formData.whatsapp}
               placeholder={"Type Here..."}
               onChange={(phone, country) =>
-                setFormData({ ...formData, whatsapp: phone, countryCode: country.countryCode.toUpperCase() })
+                setFormData({
+                  ...formData,
+                  whatsapp: phone,
+                  countryCode: country.countryCode.toUpperCase(),
+                })
               }
             />
             {renderError("whatsapp")}
@@ -450,29 +456,35 @@ const MultiStepForm = () => {
       </div>
       <Claim_description color="rgba(76, 70, 91, 0.79)" />
       {otpVerifiedPopup && (
-  <div className="otp-verified-overlay">
-    <div className="otp-verified-popup">
-      <div className="tick-animation">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 50 50"
-          width="80"
-          height="80"
-        >
-          <circle cx="25" cy="25" r="23" stroke="#1A0060" strokeWidth="3" fill="none" />
-          <path
-            d="M15 25L22 32L35 18"
-            stroke="#1A0060"
-            strokeWidth="3"
-            fill="none"
-          />
-        </svg>
-      </div>
-      <h2>OTP Verified Successfully!</h2>
-    </div>
-  </div>
-)}
-
+        <div className="otp-verified-overlay">
+          <div className="otp-verified-popup">
+            <div className="tick-animation">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 50 50"
+                width="80"
+                height="80"
+              >
+                <circle
+                  cx="25"
+                  cy="25"
+                  r="23"
+                  stroke="#1A0060"
+                  strokeWidth="3"
+                  fill="none"
+                />
+                <path
+                  d="M15 25L22 32L35 18"
+                  stroke="#1A0060"
+                  strokeWidth="3"
+                  fill="none"
+                />
+              </svg>
+            </div>
+            <h2>OTP Verified Successfully!</h2>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
