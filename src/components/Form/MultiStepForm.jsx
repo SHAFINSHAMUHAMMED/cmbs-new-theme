@@ -10,6 +10,7 @@ import MultiStepProgressBar from "../Progress_bar/MultiStepProgressBar";
 import axios from "axios";
 import { parsePhoneNumberFromString } from "libphonenumber-js"; // Import libphonenumber-js
 import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
+import { BASE_URL } from "../../config/config";
 
 const MultiStepForm = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -31,6 +32,22 @@ const MultiStepForm = () => {
   });
 
   const [formErrors, setFormErrors] = useState({});
+
+  const contactId = localStorage.getItem("contactId");
+  const [utmSource, setUtmSource] = useState("");
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const source = urlParams.get("utm_source");
+    const medium = urlParams.get("utm_medium");
+    if (source) {
+      if (source === "google" && medium === "paidsearch") {
+        setUtmSource('G Ads - Search');
+      } else {
+        setUtmSource(source);
+      }
+    }
+  }, []);
 
   const validateWhatsAppNumber = (phone, countryCode) => {
     const isManuallyValid = phone.length > 8;
@@ -211,10 +228,13 @@ const MultiStepForm = () => {
     if (verifyOtp(otp)) {
       setOtpVerifiedPopup(true); // Show the OTP Verified popup
       await handleSubmit(true); // Pass `true` to indicate OTP is verified
-
+      await axios.put(`${BASE_URL}/contact`, {
+        contactId,
+        tags:["otp-verified"]
+      });
       // Redirect after 2 seconds
       setTimeout(() => {
-        window.location.href = "https://offer.learnersuae.com/confirmation/";
+        window.location.href = `https://offer.learnersuae.com/confirmation/?id=${contactId}&name=${formData.name}`;
       }, 2000);
     } else {
       alert("Invalid OTP or OTP has expired. Please request a new one.");
@@ -243,6 +263,15 @@ const MultiStepForm = () => {
           },
         }
       );
+
+      const contactResponse = await axios.post(`${BASE_URL}/contact`, {
+        phone: formData.whatsapp,
+        name: formData.name,
+        email: formData.email,
+        source: utmSource || "Facebook",
+      });
+      localStorage.setItem("contactId", contactResponse.data);
+
       if (webhookResponse.status === 200) {
         console.log("Data sent to webhook successfully.");
       } else {

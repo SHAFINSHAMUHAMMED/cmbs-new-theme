@@ -10,6 +10,7 @@ import { parsePhoneNumberFromString } from "libphonenumber-js";
 import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 
 import "./popupTwo.css";
+import { BASE_URL } from "../../config/config";
 
 function PopupTwo({ closePopup }) {
   const [currentStep, setCurrentStep] = useState(1);
@@ -31,6 +32,22 @@ function PopupTwo({ closePopup }) {
   const [otpVerified, setOtpVerified] = useState(false);
   const { togglePopup } = usePopup();
   const { executeRecaptcha } = useGoogleReCaptcha();
+
+  const contactId = localStorage.getItem("contactId");
+  const [utmSource, setUtmSource] = useState("");
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const source = urlParams.get("utm_source");
+    const medium = urlParams.get("utm_medium");
+    if (source) {
+      if (source === "google" && medium === "paidsearch") {
+        setUtmSource('G Ads - Search');
+      } else {
+        setUtmSource(source);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -181,10 +198,15 @@ function PopupTwo({ closePopup }) {
           }
         );
 
+        await axios.put(`${BASE_URL}/contact`, {
+          contactId,
+          tags:["otp-verified"]
+        });  
+
         setOtpVerified(true); // Show the OTP verified popup
         setTimeout(() => {
           window.location.href =
-            "https://offer.learnersuae.com/brochure-thank-you/";
+            `https://offer.learnersuae.com/brochure-thank-you/?id=${contactId}&name=${formData.name}`;
         }, 3000); // Delay before redirecting
       } catch (error) {
         console.error("Error submitting verified data:", error);
@@ -240,7 +262,13 @@ function PopupTwo({ closePopup }) {
               },
             }
           );
-
+          const contactResponse = await axios.post(`${BASE_URL}/contact`, {
+            phone: formData.phone,
+            name: formData.name,
+            email: formData.email,
+            source: utmSource || "Facebook",
+          });
+          localStorage.setItem("contactId", contactResponse.data);
           setShowOtpInput(true);
         } else {
           alert("reCAPTCHA verification failed. Please try again.");
