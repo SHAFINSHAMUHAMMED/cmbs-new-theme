@@ -9,7 +9,6 @@ import axios from "axios";
 import { parsePhoneNumberFromString } from "libphonenumber-js";
 import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 import { BASE_URL } from "../../config/config";
-
 import "./popupTwo.css";
 
 function PopupTwo({ closePopup }) {
@@ -33,22 +32,25 @@ function PopupTwo({ closePopup }) {
   const { togglePopup } = usePopup();
 
   const [contactId, setContactId] = useState("");
+  const { executeRecaptcha } = useGoogleReCaptcha();
   const [utmSource, setUtmSource] = useState("");
+  const [campaignName, setCampaignName] = useState("");
+  const [campaignKeyWord, setCampaignKeyWord] = useState("");
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const source = urlParams.get("utm_source");
     const medium = urlParams.get("utm_medium");
+    setCampaignName(urlParams.get("utm_campaign"));
+    setCampaignKeyWord(urlParams.get("utm_content"));
     if (source) {
       if (source === "google" && medium === "paidsearch") {
-        setUtmSource("G Ads - Search");
+        setUtmSource('G Ads - Search');
       } else {
         setUtmSource(source);
       }
     }
   }, []);
-
-  const { executeRecaptcha } = useGoogleReCaptcha();
 
   useEffect(() => {
     const timeout = setTimeout(() => {
