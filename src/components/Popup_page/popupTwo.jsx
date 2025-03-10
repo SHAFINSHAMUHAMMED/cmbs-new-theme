@@ -8,6 +8,7 @@ import { usePopup } from "../Hoocks/PopupContext";
 import axios from "axios";
 import { parsePhoneNumberFromString } from "libphonenumber-js";
 import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
+import { BASE_URL } from "../../config/config";
 
 import "./popupTwo.css";
 
@@ -30,6 +31,23 @@ function PopupTwo({ closePopup }) {
   const [otpError, setOtpError] = useState("");
   const [otpVerified, setOtpVerified] = useState(false);
   const { togglePopup } = usePopup();
+
+  const [contactId, setContactId] = useState("");
+  const [utmSource, setUtmSource] = useState("");
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const source = urlParams.get("utm_source");
+    const medium = urlParams.get("utm_medium");
+    if (source) {
+      if (source === "google" && medium === "paidsearch") {
+        setUtmSource("G Ads - Search");
+      } else {
+        setUtmSource(source);
+      }
+    }
+  }, []);
+
   const { executeRecaptcha } = useGoogleReCaptcha();
 
   useEffect(() => {
@@ -162,40 +180,6 @@ function PopupTwo({ closePopup }) {
     return;
   }
 
-  const handleOtpSubmit = async () => {
-    const storedOtp = getStoredOtp();
-    if (otp == storedOtp) {
-      setIsLoading(true);
-      try {
-        const ipAddress = await getIPAddress();
-        const verifiedData = { ...formData, ipAddress, otpVerified: true };
-
-        await axios.post(
-          "https://connect.pabbly.com/workflow/sendwebhookdata/IjU3NjYwNTZmMDYzMDA0MzQ1MjZkNTUzMzUxM2Ei_pc",
-          // "https://connect.pabbly.com/workflow/sendwebhookdata/IjU3NjUwNTZiMDYzNTA0MzA1MjZhNTUzNjUxMzUi_pc", //test link
-          verifiedData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
-
-        setOtpVerified(true); // Show the OTP verified popup
-        setTimeout(() => {
-          window.location.href =
-            "https://offer.learnersuae.com/brochure-thank-you/";
-        }, 3000); // Delay before redirecting
-      } catch (error) {
-        console.error("Error submitting verified data:", error);
-        setOtpError("Failed to process verification. Please try again.");
-      }
-      setIsLoading(false);
-    } else {
-      setOtpError("Invalid OTP. Please try again.");
-    }
-  };
-
   const handleDownload = async (e) => {
     e.preventDefault();
     if (isFormValid()) {
@@ -241,7 +225,15 @@ function PopupTwo({ closePopup }) {
             }
           );
 
+         const contactResponse = await axios.post(`${BASE_URL}/contact`, {
+            phone: formData.phone,
+            name: formData.name,
+            email: formData.email,
+            source: utmSource || "Facebook",
+          });
+          setContactId(contactResponse.data);
           setShowOtpInput(true);
+
         } else {
           alert("reCAPTCHA verification failed. Please try again.");
         }
@@ -253,6 +245,43 @@ function PopupTwo({ closePopup }) {
     }
   };
 
+  const handleOtpSubmit = async () => {
+    const storedOtp = getStoredOtp();
+    if (otp == storedOtp) {
+      setIsLoading(true);
+      try {
+        const ipAddress = await getIPAddress();
+        const verifiedData = { ...formData, ipAddress, otpVerified: true };
+
+        await axios.post(
+          "https://connect.pabbly.com/workflow/sendwebhookdata/IjU3NjYwNTZmMDYzMDA0MzQ1MjZkNTUzMzUxM2Ei_pc",
+          // "https://connect.pabbly.com/workflow/sendwebhookdata/IjU3NjUwNTZiMDYzNTA0MzA1MjZhNTUzNjUxMzUi_pc", //test link
+          verifiedData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+
+        await axios.put(`${BASE_URL}/contact`, {
+          contactId,
+          tags: ["otp-verified"],
+        });
+
+        setOtpVerified(true); // Show the OTP verified popup
+        setTimeout(() => {
+          window.location.href = `https://offer.learnersuae.com/brochure-thank-you/?id=${contactId}&name=${formData.name}`;
+        }, 3000); // Delay before redirecting
+      } catch (error) {
+        console.error("Error submitting verified data:", error);
+        setOtpError("Failed to process verification. Please try again.");
+      }
+      setIsLoading(false);
+    } else {
+      setOtpError("Invalid OTP. Please try again.");
+    }
+  };
   return (
     <CSSTransition
       in={isActive}
@@ -306,6 +335,7 @@ function PopupTwo({ closePopup }) {
                       placeholder="Name"
                       value={formData.name}
                       onChange={handleChange}
+                      autoComplete="off"
                     />
                     <label htmlFor="Name">Email</label>
                     <input
@@ -314,6 +344,7 @@ function PopupTwo({ closePopup }) {
                       placeholder="Email"
                       value={formData.email}
                       onChange={handleChange}
+                      autoComplete="off"
                     />
                   </div>
                 )}
@@ -341,6 +372,7 @@ function PopupTwo({ closePopup }) {
                       placeholder="Job Role"
                       value={formData.jobRole}
                       onChange={handleChange}
+                      autoComplete="off"
                     />
                   </div>
                 )}

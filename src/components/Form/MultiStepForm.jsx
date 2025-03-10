@@ -10,6 +10,7 @@ import MultiStepProgressBar from "../Progress_bar/MultiStepProgressBar";
 import axios from "axios";
 import { parsePhoneNumberFromString } from "libphonenumber-js"; // Import libphonenumber-js
 import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
+import { BASE_URL } from "../../config/config";
 
 const MultiStepForm = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -31,6 +32,25 @@ const MultiStepForm = () => {
   });
 
   const [formErrors, setFormErrors] = useState({});
+  const [contactId, setContactId] = useState("");
+  const [utmSource, setUtmSource] = useState("");
+  const [campaignName, setCampaignName] = useState("");
+  const [campaignKeyWord, setCampaignKeyWord] = useState("");
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const source = urlParams.get("utm_source");
+    const medium = urlParams.get("utm_medium");
+    setCampaignName(urlParams.get("utm_campaign"));
+    setCampaignKeyWord(urlParams.get("utm_content"));
+    if (source) {
+      if (source === "google" && medium === "paidsearch") {
+        setUtmSource('G Ads - Search');
+      } else {
+        setUtmSource(source);
+      }
+    }
+  }, []);
 
   const validateWhatsAppNumber = (phone, countryCode) => {
     const isManuallyValid = phone.length > 8;
@@ -157,8 +177,6 @@ const MultiStepForm = () => {
             "https://googlerecaptchaserver.onrender.com/send-otp",
             {
               phone: formData.whatsapp,
-              name: formData.name,
-              heading: "OTP Verification",
             }
           );
 
@@ -207,20 +225,6 @@ const MultiStepForm = () => {
     return otpData.otp == enteredOtp;
   };
 
-  const handleOtpSubmit = async () => {
-    if (verifyOtp(otp)) {
-      setOtpVerifiedPopup(true); // Show the OTP Verified popup
-      await handleSubmit(true); // Pass `true` to indicate OTP is verified
-
-      // Redirect after 2 seconds
-      setTimeout(() => {
-        window.location.href = "https://offer.learnersuae.com/confirmation/";
-      }, 2000);
-    } else {
-      alert("Invalid OTP or OTP has expired. Please request a new one.");
-    }
-  };
-
   const handleSubmit = async (verified = false) => {
     setIsLoading(true);
 
@@ -243,15 +247,72 @@ const MultiStepForm = () => {
           },
         }
       );
+      const body = {
+        phone: formData.whatsapp,
+        name: formData.name,
+        email: formData.email,
+        source: utmSource || "Facebook",
+        customField: [
+          {
+            id: "se6FGXxVO1MwbaHsQJJ8",
+            field_value: "MBA",
+          },
+          {
+            id: "VLXPFtiX89yhyza2Tmjw",
+            field_value: "CMBS",
+          },
+          {
+            id: "GkmmDmkfWkSHy1uNGjk8",
+            field_value: campaignName,
+          },
+          {
+            id: "qHcBCBNKFwGbmLabQNqW",
+            field_value: campaignKeyWord,
+          },
+          {
+            id: "PUZroTvCFH7EExGtmMAR",
+            field_value: formData.jobRole,
+          },
+          {
+            id: "hsp6nL84TybaKBSA3ZGd",
+            field_value: formData.specialization,
+          },
+        ],
+      };
+      const contactResponse = await axios.post(`${BASE_URL}/contact`, body);
+      console.log("contactResponse:", contactResponse.data);
+      const newId = contactResponse.data;
+      setContactId(newId);  
       if (webhookResponse.status === 200) {
         console.log("Data sent to webhook successfully.");
       } else {
         console.error("Failed to send form data");
       }
+      return newId;
+
     } catch (error) {
       console.error("Error sending form data:", error);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleOtpSubmit = async () => {
+    if (verifyOtp(otp)) {
+      setOtpVerifiedPopup(true); // Show the OTP Verified popup
+      const newContactId = await handleSubmit(true);
+
+      await axios.put(`${BASE_URL}/contact`, {
+        contactId: newContactId,
+        tags: ["otp-verified"],
+      });
+      // Redirect after 2 seconds
+      setTimeout(() => {
+        window.location.href = `https://offer.learnersuae.com/confirmation/?id=${newContactId}&name=${formData.name}`;
+
+      }, 2000);
+    } else {
+      alert("Invalid OTP or OTP has expired. Please request a new one.");
     }
   };
 
@@ -297,6 +358,7 @@ const MultiStepForm = () => {
               value={formData.name}
               onChange={handleChange}
               placeholder="Type Here..."
+              autoComplete="off"
             />
             {renderError("name")}
           </>
@@ -338,6 +400,7 @@ const MultiStepForm = () => {
               value={formData.jobRole}
               onChange={handleChange}
               placeholder="Type Here..."
+              autoComplete="off"
             />
             {renderError("jobRole")}
           </>
@@ -372,6 +435,7 @@ const MultiStepForm = () => {
               value={formData.email}
               onChange={handleChange}
               placeholder="Type Here..."
+              autoComplete="off"
             />
             {renderError("email")}
           </>
