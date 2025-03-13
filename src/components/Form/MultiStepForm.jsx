@@ -3,7 +3,6 @@ import "../Icf_certification/icf.css";
 import Claim_description from "../Description/claim_description";
 import "react-phone-input-2/lib/style.css";
 import PhoneInput from "react-phone-input-2";
-import Lottie from "lottie-react";
 import { ClipLoader } from "react-spinners";
 import arrow from "../../assets/arrow.json";
 import MultiStepProgressBar from "../Progress_bar/MultiStepProgressBar";
@@ -36,13 +35,18 @@ const MultiStepForm = () => {
   const [utmSource, setUtmSource] = useState("");
   const [campaignName, setCampaignName] = useState("");
   const [campaignKeyWord, setCampaignKeyWord] = useState("");
+  const [utmMedium, setUtmMedium] = useState("");
+  const [gclid, setGclid] = useState("");
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const source = urlParams.get("utm_source");
     const medium = urlParams.get("utm_medium");
+    const gclid = urlParams.get("gclid");
     setCampaignName(urlParams.get("utm_campaign"));
     setCampaignKeyWord(urlParams.get("utm_content"));
+    setUtmMedium(medium);
+    setGclid(gclid);
     if (source) {
       if (source === "google" && medium === "paidsearch") {
         setUtmSource('G Ads - Search');
@@ -252,7 +256,7 @@ const MultiStepForm = () => {
         name: formData.name,
         email: formData.email,
         source: utmSource || "Facebook",
-        customField: [
+        customFields: [
           {
             id: "se6FGXxVO1MwbaHsQJJ8",
             field_value: "MBA",
@@ -278,9 +282,15 @@ const MultiStepForm = () => {
             field_value: formData.specialization,
           },
         ],
+        attributionSource: {
+        utmMedium: utmMedium,
+        gclid: gclid,
+        utmSource: utmSource,
+        utmContent: campaignKeyWord,
+        campaign: campaignName,
+    }
       };
       const contactResponse = await axios.post(`${BASE_URL}/contact`, body);
-      console.log("contactResponse:", contactResponse.data);
       const newId = contactResponse.data;
       setContactId(newId);  
       if (webhookResponse.status === 200) {

@@ -31,18 +31,23 @@ function PopupTwo({ closePopup }) {
   const [otpVerified, setOtpVerified] = useState(false);
   const { togglePopup } = usePopup();
 
-  const [contactId, setContactId] = useState("");
   const { executeRecaptcha } = useGoogleReCaptcha();
+  const [contactId, setContactId] = useState("");
   const [utmSource, setUtmSource] = useState("");
   const [campaignName, setCampaignName] = useState("");
   const [campaignKeyWord, setCampaignKeyWord] = useState("");
+  const [utmMedium, setUtmMedium] = useState("");
+  const [gclid, setGclid] = useState("");
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const source = urlParams.get("utm_source");
     const medium = urlParams.get("utm_medium");
+    const gclid = urlParams.get("gclid");
     setCampaignName(urlParams.get("utm_campaign"));
     setCampaignKeyWord(urlParams.get("utm_content"));
+    setUtmMedium(medium);
+    setGclid(gclid);
     if (source) {
       if (source === "google" && medium === "paidsearch") {
         setUtmSource('G Ads - Search');
@@ -227,12 +232,50 @@ function PopupTwo({ closePopup }) {
             }
           );
 
-         const contactResponse = await axios.post(`${BASE_URL}/contact`, {
+          const body = {
             phone: formData.phone,
             name: formData.name,
             email: formData.email,
             source: utmSource || "Facebook",
-          });
+            customFields: [
+              {
+                id: "se6FGXxVO1MwbaHsQJJ8",
+                field_value: "MBA",
+              },
+              {
+                id: "VLXPFtiX89yhyza2Tmjw",
+                field_value: "CMBS",
+              },
+              {
+                id: "GkmmDmkfWkSHy1uNGjk8",
+                field_value: campaignName,
+              },
+              {
+                id: "qHcBCBNKFwGbmLabQNqW",
+                field_value: campaignKeyWord,
+              },
+              {
+                id: "PUZroTvCFH7EExGtmMAR",
+                field_value: formData.jobRole,
+              },
+              {
+                id: "SZnVS8H9vr1PzhDJYc6s",
+                field_value: formData.preferredMode,
+              },
+              {
+                id: "7wKRbXGs313HE0huL89l",
+                field_value: formData.motivations,
+              },
+            ],
+            attributionSource: {
+              utmMedium: utmMedium,
+              gclid: gclid,
+              utmSource: utmSource,
+              utmContent: campaignKeyWord,
+              campaign: campaignName,
+          }
+          };
+          const contactResponse = await axios.post(`${BASE_URL}/contact`, body);
           setContactId(contactResponse.data);
           setShowOtpInput(true);
 
@@ -358,7 +401,7 @@ function PopupTwo({ closePopup }) {
                       country={formData.countryCode.toLowerCase()}
                       value={formData.phone}
                       placeholder="Enter your Phone Number"
-                      excludeCountries={["in", "pk"]}
+                      // excludeCountries={["in", "pk"]}
                       onChange={(value, country) =>
                         setFormData({
                           ...formData,
